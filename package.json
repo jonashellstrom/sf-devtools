@@ -1,0 +1,79 @@
+{
+  "name": "sf-devtools",
+  "version": "0.1.0",
+  "private": true,
+  "author": "Jonas Hellstrom",
+  "description": "A UI for working with sfdx",
+  "main": "./public/main.js",
+  "type": "commonjs",
+  "homepage": "./",
+  "dependencies": {
+    "@nextui-org/react": "^1.0.0-beta.10",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.9",
+    "@uiw/react-textarea-code-editor": "^2.0.6",
+    "luxon": "^3.1.0",
+    "next-themes": "^0.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-query": "^3.39.2",
+    "react-router-dom": "^6.4.3",
+    "react-scripts": "^5.0.1",
+    "typescript": "^4.9.3",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron:start": "concurrently -k \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electronmon .\"",
+    "electron:package:mac": "npm run build && electron-builder -m -c.extraMetadata.main=build/main.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      "last 1 electron version"
+    ],
+    "development": [
+      "last 1 electron version"
+    ]
+  },
+  "devDependencies": {
+    "@types/electron": "^1.6.10",
+    "@types/luxon": "^3.1.0",
+    "@types/node": "^18.11.9",
+    "autoprefixer": "^10.4.13",
+    "concurrently": "^7.6.0",
+    "cross-env": "^7.0.3",
+    "electron": "^21.3.0",
+    "electron-builder": "^23.6.0",
+    "electronmon": "^2.0.2",
+    "postcss": "^8.4.19",
+    "tailwindcss": "^3.2.4",
+    "wait-on": "^6.0.1"
+  },
+  "build": {
+    "appId": "com.jonashellstrom.sfdevtools",
+    "productName": "SF DevTools",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "public"
+    },
+    "mac": {
+      "target": "dmg"
+    }
+  }
+}
