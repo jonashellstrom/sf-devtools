@@ -1,10 +1,16 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
+const { exec: childProcessExec } = require("child_process");
+
+const CLI_JSON_SANITIZING_PATTERN =
+  /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
+let homePath;
+const SF_PROJECT_PATH = "path/to/sfproject";
 
 async function createWindow() {
   win = new BrowserWindow({
@@ -91,9 +97,35 @@ app.on("web-contents-created", (event, contents) => {
   });
 });
 
+function exec(command) {
+  return new Promise(function (resolve, reject) {
+    childProcessExec(command, (error, stdout, _stderr) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(stdout.trim());
+    });
+  });
+}
+
 ipcMain.on("toMain", (event, args) => {
   fs.readFile("path/to/file", (error, data) => {
     // Send result back to renderer process
     win.webContents.send("fromMain", { test: "hello" });
   });
+});
+
+ipcMain.handle("apexToMainWithOutput", async (event, apex) => {
+  try {
+    await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && echo "${apex}" > temp.apex`
+    );
+    const cliJsonOutput = await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:apex:execute -f temp.apex --json`
+    );
+    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+  } catch (_error) {
+    return "An error occured";
+  }
 });

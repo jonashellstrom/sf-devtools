@@ -17,4 +17,11 @@ contextBridge.exposeInMainWorld("api", {
       ipcRenderer.on(channel, (event, ...args) => func(...args));
     }
   },
+  sendApex: async (channel, apex) => {
+    let validChannels = ["apexToMainWithOutput"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(channel, apex); // needs to listen with ipcMain.handle
+      return result;
+    }
+  },
 });
