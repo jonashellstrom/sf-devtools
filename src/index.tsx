@@ -10,11 +10,22 @@ import reportWebVitals from "./reportWebVitals";
 
 const lightTheme = createTheme({
     type: "light",
-    theme: {},
+    theme: {
+      colors: {
+        codeLight: "transparent",
+      },
+      space: {
+        "span.code-line": 0,
+      },
+    },
   }),
   darkTheme = createTheme({
     type: "dark",
-    theme: {},
+    theme: {
+      colors: {
+        codeLight: "transparent",
+      },
+    },
   });
 
 const root = ReactDOM.createRoot(
