@@ -42,13 +42,13 @@ function Navbar() {
         </NUINavbar.Link>
         <NUINavbar.Link
           isActive={currentPath === "/apex-console"}
-          onPress={() => navigate(ROUTES.apexConsole)}
+          onClick={() => navigate(ROUTES.apexConsole)}
         >
           Apex Console
         </NUINavbar.Link>
         <NUINavbar.Link
           isActive={currentPath === "/debug"}
-          onPress={() => navigate(ROUTES.debugging)}
+          onClick={() => navigate(ROUTES.debugging)}
         >
           Debugging
         </NUINavbar.Link>
