@@ -14,12 +14,19 @@ import mainApi from "../../mainApi";
 import utils from "../../shared/utils";
 import CodeEditor from "./CodeEditor";
 import SoqlHelper from "./SoqlHelper";
+import useDebouncedSaveToLocalStorage from "../../hooks/useDebouncedSaveToLocalStorage";
 
+const LOCAL_STORAGE_KEY = "@sf-devtools-apex-editor";
 const PLACEHOLDER_APEX = `final String greeting = 'Hello world!';\nSystem.debug(greeting);`;
 
+const getInitialCode = () =>
+  localStorage.getItem(LOCAL_STORAGE_KEY) || PLACEHOLDER_APEX;
+
 function ApexEditor() {
-  const [code, setCode] = useState<string>(PLACEHOLDER_APEX);
+  const [code, setCode] = useState<string>(getInitialCode);
   const [output, setOutput] = useState<string>();
+
+  useDebouncedSaveToLocalStorage(LOCAL_STORAGE_KEY, code);
 
   const { handleOnPress, CopyToClipboardWrapper } = useWithCopyToClipboard();
 
