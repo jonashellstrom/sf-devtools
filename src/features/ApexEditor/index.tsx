@@ -13,6 +13,7 @@ import useWithCopyToClipboard from "../../hooks/useWithCopyToClipboard";
 import mainApi from "../../mainApi";
 import utils from "../../shared/utils";
 import CodeEditor from "./CodeEditor";
+import SoqlHelper from "./SoqlHelper";
 
 const PLACEHOLDER_APEX = `final String greeting = 'Hello world!';\nSystem.debug(greeting);`;
 
@@ -58,6 +59,7 @@ function ApexEditor() {
             disabled={isLoading}
             auto
             css={{ mr: 10 }}
+            size="sm"
           >
             {isLoading ? (
               <Loading color="currentColor" size="sm" type="points" />
@@ -65,21 +67,23 @@ function ApexEditor() {
               "Run"
             )}
           </Button>
-        </Row>
-        <Row>
           <CopyToClipboardWrapper>
             <Button
               flat
               onPress={async () => await handleOnPress(code)}
-              color="secondary"
+              color="warning"
               auto
               css={{ mr: 10 }}
+              size="sm"
             >
               Copy
             </Button>
           </CopyToClipboardWrapper>
+          <SoqlHelper appendCode={(query) => setCode((c) => c + query)} />
+        </Row>
+        <Row justify="flex-end">
           <Dropdown>
-            <Dropdown.Button flat color="error">
+            <Dropdown.Button flat color="error" size="sm">
               Clear
             </Dropdown.Button>
             <Dropdown.Menu aria-label="Static Actions">

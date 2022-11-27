@@ -19,7 +19,7 @@ pre {
   margin: 0;
   padding: 0;
 }
-
-.code-highlight {
+pre code {
   padding: 0;
+  white-space: inherit;
 }

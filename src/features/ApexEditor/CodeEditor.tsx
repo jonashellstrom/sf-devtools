@@ -37,9 +37,8 @@ function CodeEditor({
         onChange={setCode && ((e) => setCode(e.target.value))}
         disabled={isDisabled}
         padding={20}
+        minHeight={150}
         style={{
-          height: 200,
-          overflow: "scroll",
           border: "0.5px solid grey",
           background: undefined,
           whiteSpace: "normal",
