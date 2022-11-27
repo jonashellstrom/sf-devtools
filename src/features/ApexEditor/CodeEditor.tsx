@@ -44,6 +44,7 @@ function CodeEditor({
           whiteSpace: "normal",
           fontSize: 14,
           borderRadius: 10,
+          marginBottom: 15,
           fontFamily:
             "JetBrains Mono,ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
         }}

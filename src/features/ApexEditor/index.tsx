@@ -51,7 +51,7 @@ function ApexEditor() {
         language="apex"
         placeholder="Write your anonymous Apex here!"
       />
-      <Row justify="space-between" css={{ pt: 15, pb: 15 }}>
+      <Row justify="space-between" css={{ pb: 15 }}>
         <Row>
           <Button
             flat
