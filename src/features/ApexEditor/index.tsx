@@ -94,7 +94,11 @@ function ApexEditor() {
               Clear
             </Dropdown.Button>
             <Dropdown.Menu aria-label="Static Actions">
-              <Dropdown.Item key="delete" color="error">
+              <Dropdown.Item
+                key="clear-input"
+                textValue="clear input"
+                color="error"
+              >
                 <Text color="error" onClick={() => setCode("")}>
                   Clear all input
                 </Text>

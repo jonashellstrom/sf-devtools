@@ -7,7 +7,6 @@ function useDebouncedSaveToLocalStorage(
   debounceDelay: number = 3000
 ) {
   const changeHandler = useCallback(() => {
-    console.log("saving to local storage now!");
     localStorage.setItem(localStorageKey, value);
   }, [localStorageKey, value]);
 
