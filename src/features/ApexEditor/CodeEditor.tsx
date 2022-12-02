@@ -10,6 +10,14 @@ type CodeEditorProps = {
   setCode?: (code: string) => void;
   isLoading?: boolean;
   isDisabled?: boolean;
+  minHeight?: number;
+};
+
+const editorContainerStyle = {
+  overflow: "scroll",
+  border: "0.5px solid grey",
+  borderRadius: 10,
+  marginBottom: 15,
 };
 
 function CodeEditor({
@@ -19,6 +27,7 @@ function CodeEditor({
   setCode,
   isLoading,
   isDisabled,
+  minHeight = 270,
 }: CodeEditorProps) {
   const { isDark } = useTheme();
   if (isDark) document.documentElement.setAttribute("data-color-mode", "dark");
@@ -27,6 +36,8 @@ function CodeEditor({
   return (
     <div
       style={{
+        ...editorContainerStyle,
+        height: `${minHeight + 1}px`,
         position: "relative",
       }}
     >
@@ -37,14 +48,12 @@ function CodeEditor({
         onChange={setCode && ((e) => setCode(e.target.value))}
         disabled={isDisabled}
         padding={20}
-        minHeight={150}
+        minHeight={minHeight}
         style={{
-          border: "0.5px solid grey",
           background: undefined,
           whiteSpace: "normal",
           fontSize: 14,
           borderRadius: 10,
-          marginBottom: 15,
           fontFamily:
             "JetBrains Mono,ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",
         }}
