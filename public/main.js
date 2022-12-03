@@ -157,3 +157,25 @@ ipcMain.handle(
     }
   }
 );
+
+ipcMain.handle(
+  "recordDeleteToMainWithOutput",
+  async (event, sObjectType, id, useToolingApi) => {
+    try {
+      console.log(
+        "query: ",
+        `sfdx force:data:record:delete --sobjecttype ${sObjectType} -i ${id} ${
+          useToolingApi ? "--usetoolingapi" : ""
+        } --json`
+      );
+      const cliJsonOutput = await exec(
+        `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:data:record:delete --sobjecttype ${sObjectType} -i ${id} ${
+          useToolingApi ? "--usetoolingapi" : ""
+        } --json`
+      );
+      return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+    } catch (_error) {
+      return "An error occured";
+    }
+  }
+);

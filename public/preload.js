@@ -43,4 +43,16 @@ contextBridge.exposeInMainWorld("api", {
       return result;
     }
   },
+  deleteRecord: async (channel, sObjectType, id, useToolingApi) => {
+    let validChannels = ["recordDeleteToMainWithOutput"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(
+        channel,
+        sObjectType,
+        id,
+        useToolingApi
+      );
+      return result;
+    }
+  },
 });

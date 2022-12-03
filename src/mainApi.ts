@@ -22,9 +22,24 @@ async function createRecord(
   return JSON.parse(res);
 }
 
+async function deleteRecord(
+  sObjectType: string,
+  id: string,
+  useToolingApi: boolean
+) {
+  const res = await window?.api?.deleteRecord(
+    "recordDeleteToMainWithOutput",
+    sObjectType,
+    id,
+    useToolingApi
+  );
+  return JSON.parse(res);
+}
+
 const mainApi = {
   runAnonymous,
   runSoql,
   createRecord,
+  deleteRecord,
 };
 export default mainApi;

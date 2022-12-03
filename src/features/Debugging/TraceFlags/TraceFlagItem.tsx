@@ -3,10 +3,14 @@ import {
   Button,
   Card,
   Col,
+  Loading,
   Progress,
   Row,
   Text,
 } from "@nextui-org/react";
+import { useMutation, useQueryClient } from "react-query";
+import mainApi from "../../../mainApi";
+import queryKeys from "../../../shared/queryKeys";
 
 import { type TraceFlag } from "./types";
 import utils from "./utils";
@@ -16,8 +20,19 @@ type TraceFlagItemProps = {
 };
 
 function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
+  const queryClient = useQueryClient();
+
   const { elapsedTimePercentage, expirationDateTime, isFuture, isExpired } =
     utils.getFlagProgress(traceFlag);
+
+  const { mutate: deleteFlag, isLoading: isMutationLoading } = useMutation(
+    () => mainApi.deleteRecord("TraceFlag", traceFlag.Id, true),
+    {
+      onSuccess() {
+        queryClient.invalidateQueries({ queryKey: [queryKeys.TRACE_FLAGS] });
+      },
+    }
+  );
 
   return (
     <Card variant="bordered" css={{ mb: 15 }}>
@@ -101,8 +116,12 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
               <Button size="xs" css={{ mb: 5 }}>
                 Update
               </Button>
-              <Button size="xs" color="error">
-                Remove
+              <Button size="xs" color="error" onPress={() => deleteFlag()}>
+                {isMutationLoading ? (
+                  <Loading color="currentColor" size="sm" />
+                ) : (
+                  "Remove"
+                )}
               </Button>
             </Col>
           </Row>

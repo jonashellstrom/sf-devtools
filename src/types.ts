@@ -17,6 +17,12 @@ declare global {
         values: string,
         useToolingApi: boolean
       ) => Promise<string>;
+      deleteRecord: (
+        channel: string,
+        sObjectType: string,
+        id: string,
+        useToolingApi: boolean
+      ) => Promise<string>;
     };
   }
 }
