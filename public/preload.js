@@ -24,4 +24,23 @@ contextBridge.exposeInMainWorld("api", {
       return result;
     }
   },
+  sendSoql: async (channel, soql) => {
+    let validChannels = ["soqlToMainWithOutput"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(channel, soql);
+      return result;
+    }
+  },
+  createRecord: async (channel, sObjectType, values, useToolingApi) => {
+    let validChannels = ["recordCreateToMainWithOutput"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(
+        channel,
+        sObjectType,
+        values,
+        useToolingApi
+      );
+      return result;
+    }
+  },
 });

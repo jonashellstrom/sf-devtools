@@ -4,6 +4,19 @@ declare global {
       receive: (channel: string, func: (data: any) => void) => Promise<void>;
       send: (channel: string, data: string) => Promise<void>;
       sendApex: (channel: string, apex: string) => Promise<string>;
+      sendSoql: (channel: string, soql: string) => Promise<string>;
+      createRecord: (
+        channel: string,
+        sObjectType: string,
+        values: string,
+        useToolingApi: boolean
+      ) => Promise<string>;
+      updateRecord: (
+        channel: string,
+        sObjectType: string,
+        values: string,
+        useToolingApi: boolean
+      ) => Promise<string>;
     };
   }
 }

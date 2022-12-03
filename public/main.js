@@ -129,3 +129,31 @@ ipcMain.handle("apexToMainWithOutput", async (event, apex) => {
     return "An error occured";
   }
 });
+
+ipcMain.handle("soqlToMainWithOutput", async (event, soql) => {
+  try {
+    // TODO: make tooling api an input
+    const cliJsonOutput = await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:data:soql:query -q "${soql}" --usetoolingapi --json`
+    );
+    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+  } catch (_error) {
+    return "An error occured";
+  }
+});
+
+ipcMain.handle(
+  "recordCreateToMainWithOutput",
+  async (event, sObjectType, values, useToolingApi) => {
+    try {
+      const cliJsonOutput = await exec(
+        `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:data:record:create --sobjecttype ${sObjectType} -v "${values}" ${
+          useToolingApi ? "--usetoolingapi" : ""
+        } --json`
+      );
+      return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+    } catch (_error) {
+      return "An error occured";
+    }
+  }
+);
