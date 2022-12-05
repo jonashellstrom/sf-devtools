@@ -1,3 +1,5 @@
+import { GetLogResponse, ListLogsResponse } from "./shared/sfdxResponses";
+
 async function runAnonymous(apex: string) {
   const res = await window?.api?.sendApex("apexToMainWithOutput", apex);
   return JSON.parse(res);
@@ -36,10 +38,22 @@ async function deleteRecord(
   return JSON.parse(res);
 }
 
+async function listLogs() {
+  const res = await window?.api?.listLogs("listLogsToMainWithOutput");
+  return JSON.parse(res) as ListLogsResponse;
+}
+
+async function getLog(logId: string) {
+  const res = await window?.api?.getLog("getLogToMainWithOutput", logId);
+  return JSON.parse(res) as GetLogResponse;
+}
+
 const mainApi = {
   runAnonymous,
   runSoql,
   createRecord,
   deleteRecord,
+  listLogs,
+  getLog,
 };
 export default mainApi;

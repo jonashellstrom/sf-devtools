@@ -23,6 +23,8 @@ declare global {
         id: string,
         useToolingApi: boolean
       ) => Promise<string>;
+      listLogs: (channel: string) => Promise<string>;
+      getLog: (channel: string, logId: string) => Promise<string>;
     };
   }
 }

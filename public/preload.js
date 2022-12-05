@@ -55,4 +55,18 @@ contextBridge.exposeInMainWorld("api", {
       return result;
     }
   },
+  listLogs: async (channel) => {
+    let validChannels = ["listLogsToMainWithOutput"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(channel);
+      return result;
+    }
+  },
+  getLog: async (channel, logId) => {
+    let validChannels = ["getLogToMainWithOutput"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(channel, logId);
+      return result;
+    }
+  },
 });

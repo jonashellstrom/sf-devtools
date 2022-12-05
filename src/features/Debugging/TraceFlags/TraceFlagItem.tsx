@@ -22,7 +22,7 @@ type TraceFlagItemProps = {
 function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
   const queryClient = useQueryClient();
 
-  const { elapsedTimePercentage, expirationDateTime, isFuture, isExpired } =
+  const { elapsedTimePercentage, relativeExpirationTime, isFuture, isExpired } =
     utils.getFlagProgress(traceFlag);
 
   const { mutate: deleteFlag, isLoading: isMutationLoading } = useMutation(
@@ -33,6 +33,12 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
       },
     }
   );
+
+  function makeExpirationTimeStatus() {
+    if (isFuture) return "Starts " + relativeExpirationTime;
+    if (isExpired) return "" + relativeExpirationTime;
+    return "Expires " + relativeExpirationTime;
+  }
 
   return (
     <Card variant="bordered" css={{ mb: 15 }}>
@@ -103,13 +109,7 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
                 color={utils.getProgressColor(elapsedTimePercentage)}
               />
             )}
-            <Text size="$xs">{`${
-              isFuture
-                ? "Starts " + expirationDateTime.toRelative()
-                : isExpired
-                ? "" + expirationDateTime.toRelative()
-                : "Expires " + expirationDateTime.toRelative()
-            }`}</Text>
+            <Text size="$xs">{`${makeExpirationTimeStatus()}`}</Text>
           </Col>
           <Row justify="flex-end">
             <Col css={{ width: "auto" }}>

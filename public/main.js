@@ -99,13 +99,17 @@ app.on("web-contents-created", (event, contents) => {
 
 function exec(command) {
   return new Promise(function (resolve, reject) {
-    childProcessExec(command, (error, stdout, _stderr) => {
-      if (error) {
-        reject(error);
-        return;
+    childProcessExec(
+      command,
+      { maxBuffer: 1024 * 10_000 },
+      (error, stdout, _stderr) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(stdout.trim());
       }
-      resolve(stdout.trim());
-    });
+    );
   });
 }
 
@@ -162,12 +166,6 @@ ipcMain.handle(
   "recordDeleteToMainWithOutput",
   async (event, sObjectType, id, useToolingApi) => {
     try {
-      console.log(
-        "query: ",
-        `sfdx force:data:record:delete --sobjecttype ${sObjectType} -i ${id} ${
-          useToolingApi ? "--usetoolingapi" : ""
-        } --json`
-      );
       const cliJsonOutput = await exec(
         `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:data:record:delete --sobjecttype ${sObjectType} -i ${id} ${
           useToolingApi ? "--usetoolingapi" : ""
@@ -179,3 +177,26 @@ ipcMain.handle(
     }
   }
 );
+
+ipcMain.handle("listLogsToMainWithOutput", async (event) => {
+  try {
+    const cliJsonOutput = await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:apex:log:list --json`
+    );
+    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+  } catch (_error) {
+    return "An error occured";
+  }
+});
+
+ipcMain.handle("getLogToMainWithOutput", async (event, logId) => {
+  try {
+    const cliJsonOutput = await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:apex:log:get -i ${logId} --json`
+    );
+    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+  } catch (_error) {
+    console.error("an error in main.js!! error: ", _error);
+    return "An error occured";
+  }
+});

@@ -31,7 +31,7 @@ function buildCreateTraceFlagRequest(
   tracedEntityId: string
 ) {
   return (
-    "LogType=DEVELOPER_LOG " +
+    "LogType=USER_DEBUG " +
     `StartDate=${newTraceFlag.startTime.toISO()} ` +
     `ExpirationDate=${newTraceFlag.endTime.toISO()} ` +
     `DebugLevelId=${debugLevelId} ` +
