@@ -101,7 +101,7 @@ function exec(command) {
   return new Promise(function (resolve, reject) {
     childProcessExec(
       command,
-      { maxBuffer: 1024 * 10_000 },
+      { maxBuffer: 1024 * 30_000 },
       (error, stdout, _stderr) => {
         if (error) {
           reject(error);
@@ -197,6 +197,19 @@ ipcMain.handle("getLogToMainWithOutput", async (event, logId) => {
     return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {
     console.error("an error in main.js!! error: ", _error);
+    return "An error occured";
+  }
+});
+
+ipcMain.handle("bulkDeleteApexLogs", async (event) => {
+  try {
+    await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:data:soql:query -t -q "SELECT Id FROM ApexLog" -r "csv" > apex-logs-to-delete.csv`
+    );
+    await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:data:bulk:delete -s ApexLog -f apex-logs-to-delete.csv && rm apex-logs-to-delete.csv`
+    );
+  } catch (_error) {
     return "An error occured";
   }
 });
