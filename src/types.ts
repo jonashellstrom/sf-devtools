@@ -25,6 +25,7 @@ declare global {
       ) => Promise<string>;
       listLogs: (channel: string) => Promise<string>;
       getLog: (channel: string, logId: string) => Promise<string>;
+      bulkDeleteLogs: (channel: string) => Promise<void>;
     };
   }
 }

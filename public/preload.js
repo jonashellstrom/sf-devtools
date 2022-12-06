@@ -69,4 +69,11 @@ contextBridge.exposeInMainWorld("api", {
       return result;
     }
   },
+  bulkDeleteLogs: async (channel) => {
+    let validChannels = ["bulkDeleteApexLogs"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(channel);
+      return result;
+    }
+  },
 });

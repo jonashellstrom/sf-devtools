@@ -40,12 +40,21 @@ async function deleteRecord(
 
 async function listLogs() {
   const res = await window?.api?.listLogs("listLogsToMainWithOutput");
-  return JSON.parse(res) as ListLogsResponse;
+  const logsResponse = JSON.parse(res) as ListLogsResponse;
+
+  return {
+    ...logsResponse,
+    result: logsResponse.result.reverse(),
+  } as ListLogsResponse;
 }
 
 async function getLog(logId: string) {
   const res = await window?.api?.getLog("getLogToMainWithOutput", logId);
   return JSON.parse(res) as GetLogResponse;
+}
+
+async function bulkDeleteLogs() {
+  await window?.api?.bulkDeleteLogs("bulkDeleteApexLogs");
 }
 
 const mainApi = {
@@ -55,5 +64,6 @@ const mainApi = {
   deleteRecord,
   listLogs,
   getLog,
+  bulkDeleteLogs,
 };
 export default mainApi;

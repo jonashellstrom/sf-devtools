@@ -118,7 +118,7 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
               </Button>
               <Button size="xs" color="error" onPress={() => deleteFlag()}>
                 {isMutationLoading ? (
-                  <Loading color="currentColor" size="sm" />
+                  <Loading color="currentColor" size="xs" />
                 ) : (
                   "Remove"
                 )}
