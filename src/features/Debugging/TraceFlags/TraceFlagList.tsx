@@ -39,6 +39,7 @@ function TraceFlagList() {
           css={{ ml: 10, mb: 10 }}
           color="success"
           onPress={() => setIsModalOpen(true)}
+          flat
         >
           + Create New
         </Button>

@@ -113,10 +113,10 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
           </Col>
           <Row justify="flex-end">
             <Col css={{ width: "auto" }}>
-              <Button size="xs" css={{ mb: 5 }}>
+              <Button size="xs" css={{ mb: 5 }} flat>
                 Update
               </Button>
-              <Button size="xs" color="error" onPress={() => deleteFlag()}>
+              <Button size="xs" color="error" onPress={() => deleteFlag()} flat>
                 {isMutationLoading ? (
                   <Loading color="currentColor" size="xs" />
                 ) : (

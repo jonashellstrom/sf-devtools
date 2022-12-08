@@ -65,11 +65,18 @@ function DebugLogs() {
             css={{ ml: 10, mb: 10 }}
             onPress={() => setIsTailing(!isTailing)}
             color={isTailing ? "warning" : "default"}
+            flat
           >
             {isTailing ? "Pause Tailing" : "Start Tailing"}
           </Button>
         </Row>
-        <Button size="xs" auto color="error" onPress={() => bulkDeleteLogs()}>
+        <Button
+          size="xs"
+          auto
+          color="error"
+          onPress={() => bulkDeleteLogs()}
+          flat
+        >
           {isBulkDeleteLogsLoading ? (
             <Loading color="currentColor" size="xs" />
           ) : (
@@ -88,22 +95,22 @@ function DebugLogs() {
                 {logList?.result[activePage - 1].Id}
               </Badge>
             </Row>
-            <Col css={{ width: "200px" }}>
+            <Col css={{ width: "270px" }}>
               <Row>
-                <Text size="small" b css={{ width: "100px" }}>
+                <Text size="small" b css={{ width: "70px" }}>
                   Operation
                 </Text>
-                <Row css={{ width: "130px" }} justify="flex-end">
+                <Row css={{ width: "200px" }} justify="flex-end">
                   <Badge size="xs" css={{ ml: 5 }} color="warning">
                     {logList?.result[activePage - 1].Operation}
                   </Badge>
                 </Row>
               </Row>
               <Row>
-                <Text size="small" b css={{ width: "100px" }}>
+                <Text size="small" b css={{ width: "70px" }}>
                   Status
                 </Text>
-                <Row css={{ width: "130px" }} justify="flex-end">
+                <Row css={{ width: "200px" }} justify="flex-end">
                   <Badge size="xs" css={{ ml: 5 }} color="primary">
                     {logList?.result[activePage - 1].Status}
                   </Badge>
