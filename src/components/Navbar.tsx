@@ -1,12 +1,16 @@
 import {
-  Image,
+  Col,
   Navbar as NUINavbar,
+  Row,
   Switch,
   Text,
   useTheme,
 } from "@nextui-org/react";
 import { useTheme as useNextTheme } from "next-themes";
 import { useLocation, useNavigate } from "react-router-dom";
+import CurrentUser from "../features/CurrentUser";
+import { MoonIcon } from "./MoonIcon";
+import { SunIcon } from "./SunIcon";
 
 export const ROUTES = {
   root: "/",
@@ -21,18 +25,17 @@ function Navbar() {
   const currentPath = useLocation().pathname;
 
   return (
-    <NUINavbar isBordered variant="sticky">
-      <NUINavbar.Brand>
-        <Image src="/astro.png" alt="logo" height={60} />
+    <NUINavbar isBordered variant="floating">
+      <NUINavbar.Brand css={{ width: "100px" }}>
         <Text b color="inherit" hideIn="xs" style={{ paddingLeft: 10 }}>
           DevTools
         </Text>
       </NUINavbar.Brand>
       <NUINavbar.Content
         enableCursorHighlight
-        activeColor="primary"
+        activeColor="secondary"
         hideIn="xs"
-        variant="highlight-rounded"
+        variant="underline"
       >
         <NUINavbar.Link
           isActive={currentPath === "/"}
@@ -44,19 +47,38 @@ function Navbar() {
           isActive={currentPath === "/apex-console"}
           onClick={() => navigate(ROUTES.apexConsole)}
         >
-          Apex Console
+          Anonymous Apex
         </NUINavbar.Link>
         <NUINavbar.Link
           isActive={currentPath === "/debug"}
           onClick={() => navigate(ROUTES.debugging)}
         >
-          Debugging
+          Debug Logs
         </NUINavbar.Link>
       </NUINavbar.Content>
-      <Switch
-        checked={isDark}
-        onChange={(e) => setTheme(e.target.checked ? "dark" : "light")}
-      />
+      <NUINavbar.Content css={{ width: "100px", justifyContent: "flex-end" }}>
+        <CurrentUser />
+        <Col
+          css={{
+            width: "auto",
+          }}
+        >
+          <Switch
+            checked={!isDark}
+            onChange={(e) => setTheme(e.target.checked ? "light" : "dark")}
+            bordered
+            size="sm"
+            color="success"
+            iconOn={<SunIcon />}
+            iconOff={<MoonIcon />}
+          />
+          <Row justify="center" css={{ mt: 5 }}>
+            <Text size="xx-small" b>
+              {isDark ? "DARK" : "LIGHT"}
+            </Text>
+          </Row>
+        </Col>
+      </NUINavbar.Content>
     </NUINavbar>
   );
 }
