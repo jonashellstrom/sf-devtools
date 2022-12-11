@@ -4,7 +4,7 @@ function getOnlyDebugLogLines(rawLogs: string) {
   const matchingLines = [...rawLogs.matchAll(DEBUG_REGEX)].map(
     ([_, match]) => match
   );
-  return matchingLines.join("\n");
+  return matchingLines.join("\n\n");
 }
 
 const utils = {

@@ -10,7 +10,6 @@ import {
   Text,
 } from "@nextui-org/react";
 import { DateTime } from "luxon";
-import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import mainApi from "../../../mainApi";
 import soql, {
@@ -19,6 +18,7 @@ import soql, {
 } from "../../../shared/soql";
 import queryKeys from "../../../shared/queryKeys";
 import type { NewTraceFlag } from "./types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 type AddTraceFlagModalProps = {
   isModalOpen: boolean;
@@ -48,18 +48,20 @@ function AddTraceFlagModal({
     data: tracedEntities,
     isLoading,
     isError,
-  } = useQuery(queryKeys.TRACED_ENTITIES, () =>
+  } = useQuery([queryKeys.TRACED_ENTITIES], () =>
     mainApi.runSoql<QueryTraceFlags>(soql.QUERY_TRACE_FLAGS)
   );
-  const { data: debugLevels } = useQuery(queryKeys.DEBUG_LEVELS, () =>
+  const { data: debugLevels } = useQuery([queryKeys.DEBUG_LEVELS], () =>
     mainApi.runSoql<QueryDebugLevels>(soql.QUERY_DEBUG_LEVELS)
   );
+
+  const firstResult = tracedEntities?.result.records[0] ?? null;
 
   const [newTraceFlag, setNewTraceFlag] = useState<NewTraceFlag>({
     startTime: DateTime.now().plus({ minute: 1 }),
     endTime: DateTime.now().plus({ hour: 1, minute: 1 }),
     debugLevelId: debugLevels?.result.records[0].Id ?? "",
-    tracedEntityId: tracedEntities?.result.records[0].TracedEntityId ?? "",
+    tracedEntityId: (firstResult && firstResult)?.TracedEntityId ?? "",
   });
 
   const { mutate: createRecord, isLoading: isMutationLoading } = useMutation(

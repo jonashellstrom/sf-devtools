@@ -8,7 +8,8 @@ import {
   Row,
   Text,
 } from "@nextui-org/react";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import mainApi from "../../../mainApi";
 import queryKeys from "../../../shared/queryKeys";
 
@@ -44,18 +45,20 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
     <Card variant="bordered" css={{ mb: 15 }}>
       <Card.Body>
         <Row align="flex-start" justify="space-between">
-          <Col>
+          <Col css={{ mr: 10 }}>
             <Text size="$m" b>
-              Trace Flag
+              {`${traceFlag.Id}`}
             </Text>
-            <pre style={{ fontSize: "10px" }}>{`${traceFlag.Id}`}</pre>
-            <Badge
-              size="xs"
-              color="default"
-              css={{ mb: 5, mt: 2.5 }}
-            >{`${traceFlag.LogType}`}</Badge>
+            <Row>
+              <Badge
+                size="xs"
+                color="primary"
+                css={{ mb: 5, mt: 2.5 }}
+                isSquared
+              >{`${traceFlag.LogType}`}</Badge>
+            </Row>
           </Col>
-          <Col>
+          {/* <Col>
             <Text size="$sm">Traced Entity</Text>
             <pre
               style={{ fontSize: "10px" }}
@@ -75,9 +78,6 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
             <pre
               style={{ fontSize: "7.5px" }}
             >{`Callout: ${traceFlag.Callout}`}</pre>
-            <pre
-              style={{ fontSize: "7.5px" }}
-            >{`Database: ${traceFlag.Database}`}</pre>
           </Col>
           <Col>
             <pre
@@ -89,10 +89,7 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
             <pre
               style={{ fontSize: "7.5px" }}
             >{`Visualforce: ${traceFlag.Visualforce}`}</pre>
-            <pre
-              style={{ fontSize: "7.5px" }}
-            >{`Workflow: ${traceFlag.Workflow}`}</pre>
-          </Col>
+          </Col> */}
           <Col>
             <Row align="center">
               <Text size="$sm" css={{ mr: 5 }}>
@@ -113,10 +110,16 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
           </Col>
           <Row justify="flex-end">
             <Col css={{ width: "auto" }}>
-              <Button size="xs" css={{ mb: 5 }} flat>
+              <Button size="xs" css={{ mb: 5 }} bordered flat color="secondary">
                 Update
               </Button>
-              <Button size="xs" color="error" onPress={() => deleteFlag()} flat>
+              <Button
+                size="xs"
+                color="error"
+                bordered
+                flat
+                onPress={() => deleteFlag()}
+              >
                 {isMutationLoading ? (
                   <Loading color="currentColor" size="xs" />
                 ) : (

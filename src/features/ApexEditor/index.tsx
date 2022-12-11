@@ -8,7 +8,6 @@ import {
   Text,
 } from "@nextui-org/react";
 import { useState } from "react";
-import { useMutation } from "react-query";
 
 import useWithCopyToClipboard from "../../hooks/useWithCopyToClipboard";
 import mainApi from "../../mainApi";
@@ -16,6 +15,7 @@ import utils from "../../shared/utils";
 import CodeEditor from "./CodeEditor";
 import SoqlHelper from "./SoqlHelper/SoqlHelper";
 import useDebouncedSaveToLocalStorage from "../../hooks/useDebouncedSaveToLocalStorage";
+import { useMutation } from "@tanstack/react-query";
 
 const LOCAL_STORAGE_KEY = "@sf-devtools-apex-editor";
 const PLACEHOLDER_APEX = `final String greeting = 'Hello world!';\nSystem.debug(greeting);`;
@@ -36,7 +36,7 @@ function ApexEditor() {
     mainApi.runAnonymous,
     {
       onMutate: () => {
-        setOutput("LOADING...");
+        setOutput("Running ...");
       },
       onError: (_error, _variables, _context) => {
         setOutput(`⛔️ Something went wrong...`);
@@ -58,39 +58,50 @@ function ApexEditor() {
 
   return (
     <Container css={{ pt: 30 }}>
-      <Text h4 b>
-        Anonymous Apex
-      </Text>
+      <Row justify="space-between">
+        <Text h5 b>
+          Apex Editor
+        </Text>
+      </Row>
       <CodeEditor
         code={code}
         setCode={setCode}
         language="apex"
         placeholder="Write your anonymous Apex here!"
-        minHeight={250}
+        minHeight={330}
       />
       <Row justify="space-between" css={{ pb: 15 }}>
         <Row>
           <Button
-            flat
             onPress={() => runAnonymous(code)}
             disabled={isLoading}
             auto
-            css={{ mr: 10 }}
+            css={{
+              mr: 10,
+              borderRadius: 5,
+            }}
             size="sm"
           >
             {isLoading ? (
               <Loading color="currentColor" size="sm" type="points" />
             ) : (
-              "Run"
+              <>
+                <Text color="white" b>
+                  Run
+                </Text>
+                <Text color="white" b css={{ ml: 5 }}>
+                  ▶️
+                </Text>
+              </>
             )}
           </Button>
           <CopyToClipboardWrapper>
             <Button
               flat
               onPress={async () => await handleOnPress(code)}
-              color="warning"
+              color="primary"
               auto
-              css={{ mr: 10 }}
+              css={{ mr: 10, borderRadius: 5 }}
               size="sm"
             >
               Copy
@@ -100,7 +111,12 @@ function ApexEditor() {
         </Row>
         <Row justify="flex-end">
           <Dropdown isBordered>
-            <Dropdown.Button flat color="error" size="sm">
+            <Dropdown.Button
+              flat
+              color="error"
+              size="sm"
+              css={{ borderRadius: 5 }}
+            >
               Clear
             </Dropdown.Button>
             <Dropdown.Menu aria-label="Static Actions">
@@ -117,9 +133,6 @@ function ApexEditor() {
           </Dropdown>
         </Row>
       </Row>
-      <Text h4 b>
-        Output
-      </Text>
       <div
         style={{
           position: "relative",
@@ -151,14 +164,14 @@ function ApexEditor() {
         </Row>
         {isLoading && (
           <Loading
-            color="currentColor"
+            color="secondary"
             type="points"
             size="lg"
             css={{
               position: "absolute",
               bottom: 75,
               right: 25,
-              opacity: 0.5,
+              opacity: 0.75,
             }}
           />
         )}

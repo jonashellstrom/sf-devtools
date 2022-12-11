@@ -1,6 +1,9 @@
-import { Button, Loading, Row, Text } from "@nextui-org/react";
+import { Button, Row, Text } from "@nextui-org/react";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { useQuery } from "react-query";
+
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 import mainApi from "../../../mainApi";
 import queryKeys from "../../../shared/queryKeys";
@@ -12,7 +15,7 @@ import { type TraceFlag } from "./types";
 function TraceFlagList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data, isLoading, isError } = useQuery(queryKeys.TRACE_FLAGS, () =>
+  const { data, isLoading, isError } = useQuery([queryKeys.TRACE_FLAGS], () =>
     mainApi.runSoql<QueryTraceFlags>(soql.QUERY_TRACE_FLAGS)
   );
 
@@ -31,24 +34,30 @@ function TraceFlagList() {
         setIsModalOpen={setIsModalOpen}
       />
       <Row align="center">
-        <Text h4 b>
+        <Text h5 b>
           Trace Flags
         </Text>
         <Button
           size="xs"
           css={{ ml: 10, mb: 10 }}
-          color="success"
+          color="secondary"
           onPress={() => setIsModalOpen(true)}
           flat
         >
-          + Create New
+          Create New Flag
         </Button>
       </Row>
       {isLoading ? (
-        <Row align="center" justify="center" css={{ m: 20 }}>
-          <Text>Fetching Trace Flags</Text>
-          <Loading size="md" css={{ ml: 10 }} />
-        </Row>
+        <Skeleton
+          count={1}
+          height="97px"
+          style={{
+            borderRadius: 15,
+            marginBottom: 15,
+            marginTop: -10,
+            border: "0.5px solid grey",
+          }}
+        />
       ) : (
         data?.result.records.map((f: TraceFlag) => (
           <TraceFlagItem traceFlag={f} key={f.Id} />

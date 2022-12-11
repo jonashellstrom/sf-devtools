@@ -60,11 +60,11 @@ function SoqlHelper({ appendCode }: SoqlHelperProps) {
       <Dropdown.Item
         key={opt.sObject}
         textValue={opt.sObject}
-        color={opt.sObject === "AddNew" ? "primary" : "secondary"}
+        color={opt.sObject === "AddNew" ? "success" : "primary"}
       >
         <Row justify="space-between" align="center">
           <Text
-            color={opt.sObject === "AddNew" ? "primary" : "secondary"}
+            color="primary"
             onClick={() => handleOnSoqlOptionClick(opt)}
             css={{ width: "100%" }}
           >
@@ -96,7 +96,12 @@ function SoqlHelper({ appendCode }: SoqlHelperProps) {
         setOptions={setOptions}
       />
       <Dropdown isBordered>
-        <Dropdown.Button flat color="secondary" css={{ mr: 10 }} size="sm">
+        <Dropdown.Button
+          flat
+          color="primary"
+          css={{ mr: 10, borderRadius: 5 }}
+          size="sm"
+        >
           Insert SOQL
         </Dropdown.Button>
         <Dropdown.Menu aria-label="Static Actions">

@@ -21,7 +21,9 @@ function useWithCopyToClipboard(hidePopoverAfter: number = 3000) {
         <Popover isOpen={isOpen} onOpenChange={setIsOpen} isBordered>
           <Popover.Trigger>{children}</Popover.Trigger>
           <Popover.Content>
-            <Text css={{ p: "$10" }}>Copied to clipboard</Text>
+            <Text css={{ p: "$8" }} size="sm">
+              Copied to clipboard!
+            </Text>
           </Popover.Content>
         </Popover>
       </Grid>

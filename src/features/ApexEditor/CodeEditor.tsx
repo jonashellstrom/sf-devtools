@@ -60,14 +60,14 @@ function CodeEditor({
       />
       {isLoading && (
         <Loading
-          color="currentColor"
+          color="secondary"
           type="points"
           size="lg"
           css={{
             position: "absolute",
             bottom: 30,
             right: 25,
-            opacity: 0.5,
+            opacity: 0.75,
           }}
         />
       )}
