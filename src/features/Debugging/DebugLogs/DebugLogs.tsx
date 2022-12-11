@@ -1,133 +1,90 @@
-import {
-  Badge,
-  Button,
-  Col,
-  Loading,
-  Pagination,
-  Row,
-  Text,
-} from "@nextui-org/react";
+import { Button, Col, Progress, Text } from "@nextui-org/react";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import mainApi from "../../../mainApi";
 import queryKeys from "../../../shared/queryKeys";
-import utils from "../../../shared/utils";
-import CodeEditor from "../../ApexEditor/CodeEditor";
+import { type ListLogsResponse } from "../../../shared/sfdxResponses";
+import DebugLogsActionRow from "./DebugLogsActionRow";
+import LogItem from "./LogItem";
 
 function DebugLogs() {
-  const queryClient = useQueryClient();
-
   const [isTailing, setIsTailing] = useState(false);
-  const [activeLogId, setActiveLogId] = useState("");
-  const [activePage, setActivePage] = useState(1);
+  const [fetchedLogs, setFetchedLogs] = useState<
+    ListLogsResponse["result"] | []
+  >([]);
 
-  const [logs, setLogs] = useState("");
+  const [partialLogsSet, setPartialLogsSet] = useState(0);
 
-  const { data: logList, isLoading: isListLogsLoading } = useQuery(
-    queryKeys.LIST_LOGS,
+  const { data: _data } = useQuery(
+    [queryKeys.LIST_LOGS],
     () => mainApi.listLogs(),
-    { refetchInterval: isTailing ? 10_000 : 0 }
-  );
-
-  const { isLoading: isGetLogLoading } = useQuery(
-    `${queryKeys.GET_LOG_BY_ID}-${activeLogId}`,
-    () => mainApi.getLog(activeLogId),
     {
-      enabled: Boolean(activeLogId),
-      onSuccess(data) {
-        const debugLinesOnly = utils.getOnlyDebugLogLines(data.result[0].log);
-        setLogs(debugLinesOnly || "No debug lines...");
+      onSuccess: (data) => {
+        setFetchedLogs(data.result);
+        setPartialLogsSet((v) => v + 3);
       },
+      refetchInterval: isTailing ? 10_000 : 0,
     }
   );
 
-  const { mutate: bulkDeleteLogs, isLoading: isBulkDeleteLogsLoading } =
-    useMutation(() => mainApi.bulkDeleteLogs(), {
-      onSuccess() {
-        queryClient.invalidateQueries({ queryKey: [queryKeys.LIST_LOGS] });
-      },
-    });
+  const logsQueries = useQueries({
+    queries:
+      fetchedLogs &&
+      fetchedLogs.slice(0, partialLogsSet).map((log) => {
+        return {
+          queryKey: ["log-id", log.Id],
+          queryFn: () => mainApi.getLog(log.Id),
+          enabled: fetchedLogs && fetchedLogs.length > 0,
+          staleTime: Infinity,
+        };
+      }),
+  });
 
-  if (isListLogsLoading) {
-    return <Loading />;
-  }
+  const isDoneFetching = logsQueries.every((i) => i.isFetched);
+
+  const finishedCount = logsQueries.reduce(
+    (sum, q) => sum + (q.isFetched ? 1 : 0),
+    0
+  );
+
   return (
     <>
-      <Row justify="space-between">
-        <Row align="center">
-          <Text h4 b>
-            Tailed Logs
-          </Text>
-          <Button
-            size="xs"
-            auto
-            css={{ ml: 10, mb: 10 }}
-            onPress={() => setIsTailing(!isTailing)}
-            color={isTailing ? "warning" : "default"}
-            flat
-          >
-            {isTailing ? "Pause Tailing" : "Start Tailing"}
-          </Button>
-        </Row>
-        <Button
-          size="xs"
-          auto
-          color="error"
-          onPress={() => bulkDeleteLogs()}
-          flat
-        >
-          {isBulkDeleteLogsLoading ? (
-            <Loading color="currentColor" size="xs" />
-          ) : (
-            "Delete All Logs"
-          )}
-        </Button>
-      </Row>
-      <Row>
-        {logList && logList.result.length > 1 && (
-          <Row justify="space-between">
-            <Row>
-              <Text size="small" b>
-                Log Id
-              </Text>
-              <Badge size="xs" css={{ ml: 5 }}>
-                {logList?.result[activePage - 1].Id}
-              </Badge>
-            </Row>
-            <Col css={{ width: "270px" }}>
-              <Row>
-                <Text size="small" b css={{ width: "70px" }}>
-                  Operation
-                </Text>
-                <Row css={{ width: "200px" }} justify="flex-end">
-                  <Badge size="xs" css={{ ml: 5 }} color="warning">
-                    {logList?.result[activePage - 1].Operation}
-                  </Badge>
-                </Row>
-              </Row>
-              <Row>
-                <Text size="small" b css={{ width: "70px" }}>
-                  Status
-                </Text>
-                <Row css={{ width: "200px" }} justify="flex-end">
-                  <Badge size="xs" css={{ ml: 5 }} color="primary">
-                    {logList?.result[activePage - 1].Status}
-                  </Badge>
-                </Row>
-              </Row>
-            </Col>
-          </Row>
-        )}
-      </Row>
-      <CodeEditor
-        language="apex"
-        isDisabled
-        code={logs}
-        placeholder="Debug logs will show up here"
-        isLoading={isGetLogLoading}
+      <DebugLogsActionRow
+        isTailing={isTailing}
+        setIsTailing={setIsTailing}
+        hasFetchedLogs={fetchedLogs.length > 0}
       />
-      <Row justify="center">
+      <Col>
+        <Text size="$xs" css={{ mb: 5 }}>
+          {isDoneFetching
+            ? `Fetched ${logsQueries.length} log groups`
+            : `Fetched ${finishedCount} out of ${logsQueries.length} log groups`}
+        </Text>
+        <Progress
+          size="xs"
+          value={(finishedCount / logsQueries.length) * 100}
+          color={isDoneFetching ? "success" : "warning"}
+          striped={!isDoneFetching}
+          animated
+          css={{ mb: 10 }}
+        />
+      </Col>
+      {logsQueries.map((logQuery, i) => (
+        <LogItem
+          key={`log-item-${i}`}
+          log={logQuery.data}
+          logData={fetchedLogs[i]}
+          isLoading={logQuery.isLoading}
+        />
+      ))}
+      <Button
+        onPress={() => setPartialLogsSet((v) => v + 3)}
+        disabled={!isDoneFetching}
+      >
+        Fetch more
+      </Button>
+      {/* <Row justify="center">
         {isListLogsLoading ? (
           <Row>
             <Text>{`Fetching logs...`}</Text>
@@ -146,7 +103,11 @@ function DebugLogs() {
                 onChange={(page) => {
                   if (logList) {
                     setActivePage(page);
-                    setLogs("LOADING...");
+                    setLogs(
+                      `Fetching Apex Logs with ID ${
+                        logList?.result[page - 1].Id
+                      }`
+                    );
                     setActiveLogId(logList?.result[page - 1].Id);
                   }
                 }}
@@ -155,7 +116,7 @@ function DebugLogs() {
             </>
           )
         )}
-      </Row>
+      </Row> */}
     </>
   );
 }
