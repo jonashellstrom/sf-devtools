@@ -24,10 +24,7 @@ function CurrentUser() {
           </Loading>
         ) : (
           <>
-            {/* <Text size="xx-small">{data?.result.username}</Text> */}
-            <Text size="xx-small" b>
-              Authenticated Scratch
-            </Text>
+            <Text size="xx-small">Authenticated with Scratch</Text>
             <Text size="xx-small">{data?.result.orgId}</Text>
             <Text size="xx-small">{makeScratchNickname()}</Text>
           </>

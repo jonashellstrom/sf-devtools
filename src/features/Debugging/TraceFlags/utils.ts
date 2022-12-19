@@ -21,12 +21,12 @@ function getFlagProgress(traceFlag: TraceFlag) {
     ((nowDateTimeMs - startDateTime.toMillis()) / flagDurationMs) * 100;
   const isFuture = startDateTime.toMillis() > nowDateTimeMs;
   const isExpired = elapsedTimePercentage > 100;
-  const relativeExpirationTime = expirationDateTime.toRelative();
+
   return {
     elapsedTimePercentage,
-    relativeExpirationTime,
     isFuture,
     isExpired,
+    expirationDateTime,
   };
 }
 

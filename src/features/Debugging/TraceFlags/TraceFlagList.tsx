@@ -1,4 +1,4 @@
-import { Button, Row, Text } from "@nextui-org/react";
+import { Button, Collapse, Text } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -33,36 +33,45 @@ function TraceFlagList() {
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
       />
-      <Row align="center">
-        <Text h5 b>
-          Trace Flags
-        </Text>
+      <Collapse
+        css={{ mt: -20, mb: 20, borderTop: "0px" }}
+        title={
+          <Text h5 b>
+            Trace Flags
+          </Text>
+        }
+        subtitle={
+          <Text size="$xs" css={{ opacity: 0.7 }}>
+            Expand to manage your trace flags
+          </Text>
+        }
+      >
+        {isLoading ? (
+          <Skeleton
+            count={1}
+            height="97px"
+            style={{
+              borderRadius: 15,
+              marginBottom: 15,
+              marginTop: -10,
+              border: "0.5px solid grey",
+            }}
+          />
+        ) : (
+          data?.result.records.map((f: TraceFlag) => (
+            <TraceFlagItem traceFlag={f} key={f.Id} />
+          ))
+        )}
         <Button
-          size="xs"
           css={{ ml: 10, mb: 10 }}
-          color="secondary"
+          auto
           onPress={() => setIsModalOpen(true)}
-          flat
+          color="success"
+          size="xs"
         >
           Create New Flag
         </Button>
-      </Row>
-      {isLoading ? (
-        <Skeleton
-          count={1}
-          height="97px"
-          style={{
-            borderRadius: 15,
-            marginBottom: 15,
-            marginTop: -10,
-            border: "0.5px solid grey",
-          }}
-        />
-      ) : (
-        data?.result.records.map((f: TraceFlag) => (
-          <TraceFlagItem traceFlag={f} key={f.Id} />
-        ))
-      )}
+      </Collapse>
     </>
   );
 }

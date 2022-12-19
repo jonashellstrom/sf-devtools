@@ -15,7 +15,7 @@ const SF_PROJECT_PATH = "path/to/sfproject";
 async function createWindow() {
   win = new BrowserWindow({
     width: 1200,
-    height: 800,
+    height: 840,
     minHeight: 500,
     minWidth: 900,
     webPreferences: {
@@ -104,7 +104,7 @@ function exec(command) {
       { maxBuffer: 1024 * 30_000 },
       (error, stdout, _stderr) => {
         if (error) {
-          reject(error);
+          reject(stdout.trim());
           return;
         }
         resolve(stdout.trim());
@@ -123,10 +123,10 @@ ipcMain.on("toMain", (event, args) => {
 ipcMain.handle("apexToMainWithOutput", async (event, apex) => {
   try {
     await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && echo "${apex}" > temp.apex`
+      `cd ${homePath}/${SF_PROJECT_PATH} && echo "${apex}" > sfdevtoolstemp.apex`
     );
     const cliJsonOutput = await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:apex:execute -f temp.apex --json`
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:apex:execute -f sfdevtoolstemp.apex --json && rm sfdevtoolstemp.apex`
     );
     return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {
@@ -156,8 +156,8 @@ ipcMain.handle(
         } --json`
       );
       return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
-    } catch (_error) {
-      return "An error occured";
+    } catch (error) {
+      return error.replace(CLI_JSON_SANITIZING_PATTERN, "");
     }
   }
 );
@@ -209,6 +209,17 @@ ipcMain.handle("bulkDeleteApexLogs", async (event) => {
     await exec(
       `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:data:bulk:delete -s ApexLog -f apex-logs-to-delete.csv && rm apex-logs-to-delete.csv`
     );
+  } catch (_error) {
+    return "An error occured";
+  }
+});
+
+ipcMain.handle("fetchCurrentUser", async (event) => {
+  try {
+    const cliJsonOutput = await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:user:display --json`
+    );
+    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {
     return "An error occured";
   }

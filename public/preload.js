@@ -76,4 +76,11 @@ contextBridge.exposeInMainWorld("api", {
       return result;
     }
   },
+  fetchCurrentUser: async (channel) => {
+    let validChannels = ["fetchCurrentUser"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(channel);
+      return result;
+    }
+  },
 });

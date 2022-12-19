@@ -25,16 +25,21 @@ function Navbar() {
   const currentPath = useLocation().pathname;
 
   return (
-    <NUINavbar isBordered variant="floating">
+    <NUINavbar isBordered variant="floating" css={{ zIndex: 10000 }}>
       <NUINavbar.Brand css={{ width: "100px" }}>
-        <Text b color="inherit" hideIn="xs" style={{ paddingLeft: 10 }}>
-          DevTools
+        <Text
+          size={20}
+          css={{
+            textGradient: "45deg, $blue600 -20%, $green600 80%",
+          }}
+          weight="bold"
+        >
+          SF DevTools 🛠
         </Text>
       </NUINavbar.Brand>
       <NUINavbar.Content
         enableCursorHighlight
         activeColor="secondary"
-        hideIn="xs"
         variant="underline"
       >
         <NUINavbar.Link

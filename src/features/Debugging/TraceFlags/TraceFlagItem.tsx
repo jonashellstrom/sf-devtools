@@ -9,6 +9,8 @@ import {
   Text,
 } from "@nextui-org/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { DateTime } from "luxon";
+import { useState } from "react";
 
 import mainApi from "../../../mainApi";
 import queryKeys from "../../../shared/queryKeys";
@@ -20,11 +22,25 @@ type TraceFlagItemProps = {
   traceFlag: TraceFlag;
 };
 
+function getRelativeExpirationTime(
+  isFuture: boolean,
+  isExpired: boolean,
+  expirationDateTime: DateTime
+) {
+  if (isFuture) return "Starts " + expirationDateTime.toRelative();
+  if (isExpired) return expirationDateTime.toRelative();
+  return "Expires " + expirationDateTime.toRelative();
+}
+
 function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
   const queryClient = useQueryClient();
 
-  const { elapsedTimePercentage, relativeExpirationTime, isFuture, isExpired } =
+  const { elapsedTimePercentage, isFuture, isExpired, expirationDateTime } =
     utils.getFlagProgress(traceFlag);
+
+  const [relativeExpirationTime, setRelativeExpirationTime] = useState<
+    string | null
+  >(getRelativeExpirationTime(isFuture, isExpired, expirationDateTime));
 
   const { mutate: deleteFlag, isLoading: isMutationLoading } = useMutation(
     () => mainApi.deleteRecord("TraceFlag", traceFlag.Id, true),
@@ -35,11 +51,11 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
     }
   );
 
-  function makeExpirationTimeStatus() {
-    if (isFuture) return "Starts " + relativeExpirationTime;
-    if (isExpired) return "" + relativeExpirationTime;
-    return "Expires " + relativeExpirationTime;
-  }
+  setInterval(() => {
+    setRelativeExpirationTime(
+      getRelativeExpirationTime(isFuture, isExpired, expirationDateTime)
+    );
+  }, 5000);
 
   return (
     <Card variant="bordered" css={{ mb: 15 }}>
@@ -106,24 +122,24 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
                 color={utils.getProgressColor(elapsedTimePercentage)}
               />
             )}
-            <Text size="$xs">{`${makeExpirationTimeStatus()}`}</Text>
+            <Text size="$xs">{`${relativeExpirationTime}`}</Text>
           </Col>
           <Row justify="flex-end">
             <Col css={{ width: "auto" }}>
-              <Button size="xs" css={{ mb: 5 }} bordered flat color="secondary">
+              <Button size="xs" color="primary" flat css={{ mb: 10 }}>
                 Update
               </Button>
               <Button
                 size="xs"
                 color="error"
-                bordered
                 flat
+                disabled={isMutationLoading}
                 onPress={() => deleteFlag()}
               >
                 {isMutationLoading ? (
                   <Loading color="currentColor" size="xs" />
                 ) : (
-                  "Remove"
+                  "Delete"
                 )}
               </Button>
             </Col>

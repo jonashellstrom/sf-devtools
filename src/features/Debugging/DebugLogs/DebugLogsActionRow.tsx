@@ -1,28 +1,40 @@
 import { Row, Text } from "@nextui-org/react";
 
 import BulkDeleteButton from "./BulkDeleteButton";
-import TailingButton from "./TailingButton";
+import FetchingButton from "./FetchingButton";
 
 type DebugLogsActionRowProps = {
-  isTailing: boolean;
-  setIsTailing: (v: boolean) => void;
+  isFetching: boolean;
+  setIsFetching: (v: boolean) => void;
   hasFetchedLogs: boolean;
+  logGroupCount: number;
 };
 function DebugLogsActionRow({
-  isTailing,
-  setIsTailing,
+  isFetching,
+  setIsFetching,
   hasFetchedLogs,
+  logGroupCount,
 }: DebugLogsActionRowProps) {
   return (
-    <Row justify="space-between">
-      <Row align="center">
-        <Text h5 b>
-          Tailed Logs
-        </Text>
-        <TailingButton isTailing={isTailing} setIsTailing={setIsTailing} />
+    <>
+      <Row justify="space-between">
+        <Row align="center">
+          <Text h5 b>
+            Log Groups
+          </Text>
+          <FetchingButton
+            isFetching={isFetching}
+            setIsFetching={setIsFetching}
+          />
+        </Row>
+        <BulkDeleteButton isDisabled={!hasFetchedLogs} />
       </Row>
-      <BulkDeleteButton isDisabled={!hasFetchedLogs} />
-    </Row>
+      <Row justify="space-between">
+        <Text size="$xs" css={{ mb: 5, opacity: 0.7 }} b>
+          {`${logGroupCount} total log groups fetched`}
+        </Text>
+      </Row>
+    </>
   );
 }
 

@@ -1,5 +1,14 @@
-import { GetLogResponse, ListLogsResponse } from "./shared/sfdxResponses";
+import fixtures from "./features/ScratchView/fixtures";
+import type {
+  GetLogResponse,
+  ListLogsResponse,
+  SfdxErrorResponse,
+} from "./shared/sfdxResponses";
+import sfdxResponses from "./shared/sfdxResponses";
 
+function timeout(delay: number) {
+  return new Promise((res) => setTimeout(res, delay));
+}
 async function runAnonymous(apex: string) {
   const res = await window?.api?.sendApex("apexToMainWithOutput", apex);
   return JSON.parse(res);
@@ -10,7 +19,7 @@ async function runSoql<T>(soql: string) {
   return JSON.parse(res) as T;
 }
 
-async function createRecord(
+async function createRecord<T>(
   sObjectType: string,
   values: string,
   useToolingApi: boolean
@@ -21,7 +30,12 @@ async function createRecord(
     values,
     useToolingApi
   );
-  return JSON.parse(res);
+  const parsed = JSON.parse(res);
+  if (sfdxResponses.isSuccessResponse<T>(parsed)) {
+    return parsed;
+  } else {
+    throw Error((parsed as SfdxErrorResponse).message);
+  }
 }
 
 async function deleteRecord(
@@ -48,13 +62,24 @@ async function listLogs() {
   } as ListLogsResponse;
 }
 
-async function getLog(logId: string) {
+async function getLog(logId: string, logData: ListLogsResponse["result"][0]) {
   const res = await window?.api?.getLog("getLogToMainWithOutput", logId);
-  return JSON.parse(res) as GetLogResponse;
+  const parsedRes = JSON.parse(res);
+  return { ...parsedRes, logData } as GetLogResponse;
 }
 
 async function bulkDeleteLogs() {
   await window?.api?.bulkDeleteLogs("bulkDeleteApexLogs");
+}
+
+async function displayUser() {
+  const res = await window?.api?.fetchCurrentUser("fetchCurrentUser");
+  return JSON.parse(res);
+}
+
+async function listOrgs() {
+  await timeout(1000);
+  return fixtures.LIST_ORGS_RESPONSE;
 }
 
 const mainApi = {
@@ -65,5 +90,7 @@ const mainApi = {
   listLogs,
   getLog,
   bulkDeleteLogs,
+  displayUser,
+  listOrgs,
 };
 export default mainApi;
