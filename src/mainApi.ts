@@ -1,14 +1,12 @@
-import fixtures from "./features/ScratchView/fixtures";
 import type {
   GetLogResponse,
+  ListLimitsSuccessResponse,
   ListLogsResponse,
+  ListOrgsSuccessResponse,
   SfdxErrorResponse,
 } from "./shared/sfdxResponses";
 import sfdxResponses from "./shared/sfdxResponses";
 
-function timeout(delay: number) {
-  return new Promise((res) => setTimeout(res, delay));
-}
 async function runAnonymous(apex: string) {
   const res = await window?.api?.sendApex("apexToMainWithOutput", apex);
   return JSON.parse(res);
@@ -77,9 +75,31 @@ async function displayUser() {
   return JSON.parse(res);
 }
 
+async function setDefaultOrg(username: string) {
+  await window?.api?.setDefaultOrg("setDefaultOrg", username);
+}
+
+async function listLimits() {
+  const res = await window?.api?.listLimits("listLimits");
+  return JSON.parse(res) as ListLimitsSuccessResponse;
+}
+
 async function listOrgs() {
-  await timeout(1000);
-  return fixtures.LIST_ORGS_RESPONSE;
+  const res = await window?.api?.listOrgs("listOrgs");
+  const listOrgsRes = JSON.parse(res);
+  return listOrgsRes as ListOrgsSuccessResponse;
+}
+
+async function setAliasForOrg(username: string, alias: string) {
+  await window?.api?.setAliasForOrg("setAliasForOrg", username, alias);
+}
+
+async function openOrg(username: string) {
+  await window?.api?.openOrg("openOrg", username);
+}
+
+async function markScratchForDeletion(username: string) {
+  await window?.api?.markScratchForDeletion("markScratchForDeletion", username);
 }
 
 const mainApi = {
@@ -91,6 +111,11 @@ const mainApi = {
   getLog,
   bulkDeleteLogs,
   displayUser,
+  setDefaultOrg,
+  setAliasForOrg,
+  listLimits,
   listOrgs,
+  openOrg,
+  markScratchForDeletion,
 };
 export default mainApi;

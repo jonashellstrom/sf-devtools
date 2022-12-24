@@ -1,3 +1,8 @@
+type ISOTimestamp = string; // "2023-01-25T18:30:22.810Z"
+type UnixTimestamp = string; // "1671128872000"
+type SQLDate = string; // "2023-01-25"
+type DateAndTime = string; // 2023-01-25, 1:30:22 p.m.
+
 export type SfdxResponse = {
   status: 0 | 1;
 };
@@ -60,6 +65,70 @@ export type CreateRecordResult = {
   warnings: string[];
   infos: string[];
 };
+
+export type ListOrgsSuccessResponse = SfdxSuccessResponse<ListOrgsResponse>;
+
+export type ListOrgsResponse = {
+  nonScratchOrgs: [
+    {
+      username: string;
+      orgId: string;
+      accessToken: string;
+      instanceUrl: string;
+      loginUrl: string;
+      clientId: string;
+      isDevHub: boolean;
+      instanceApiVersion: string;
+      instanceApiVersionLastRetrieved: DateAndTime;
+      alias: string;
+      lastUsed: string;
+      connectedStatus: string;
+      isDefaultDevHubUsername?: boolean;
+      defaultMarker?: "(D)";
+    }
+  ];
+  scratchOrgs: [
+    {
+      accessToken: string;
+      instanceUrl: string;
+      orgId: string;
+      username: string;
+      loginUrl: string;
+      clientId: string;
+      isDevHub: boolean;
+      devHubUsername: string;
+      created: UnixTimestamp;
+      expirationDate: SQLDate;
+      createdOrgInstance: string;
+      instanceApiVersion: string;
+      instanceApiVersionLastRetrieved: DateAndTime;
+      tracksSource: boolean;
+      alias: string;
+      lastUsed: ISOTimestamp;
+      signupUsername: string;
+      createdBy: string;
+      createdDate: ISOTimestamp;
+      devHubOrgId: string;
+      attributes: {
+        type: string;
+        url: string;
+      };
+      orgName: string;
+      edition: string;
+      status: "Active" | "Expired";
+      isExpired: false;
+      namespace: string;
+    }
+  ];
+};
+
+type ListLimitsResponse = Array<{
+  name: string;
+  max: number;
+  remaining: number;
+}>;
+
+export type ListLimitsSuccessResponse = SfdxSuccessResponse<ListLimitsResponse>;
 
 const isSuccessResponse = <T>(
   res: SfdxResponse

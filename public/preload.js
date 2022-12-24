@@ -83,4 +83,46 @@ contextBridge.exposeInMainWorld("api", {
       return result;
     }
   },
+  setDefaultOrg: async (channel, username) => {
+    let validChannels = ["setDefaultOrg"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(channel, username);
+      return result;
+    }
+  },
+  listLimits: async (channel) => {
+    let validChannels = ["listLimits"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(channel);
+      return result;
+    }
+  },
+  listOrgs: async (channel) => {
+    let validChannels = ["listOrgs"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(channel);
+      return result;
+    }
+  },
+  setAliasForOrg: async (channel, username, alias) => {
+    let validChannels = ["setAliasForOrg"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(channel, username, alias);
+      return result;
+    }
+  },
+  openOrg: async (channel, username) => {
+    let validChannels = ["openOrg"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(channel, username);
+      return result;
+    }
+  },
+  markScratchForDeletion: async (channel, username) => {
+    let validChannels = ["markScratchForDeletion"];
+    if (validChannels.includes(channel)) {
+      const result = await ipcRenderer.invoke(channel, username);
+      return result;
+    }
+  },
 });

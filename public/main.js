@@ -224,3 +224,69 @@ ipcMain.handle("fetchCurrentUser", async (event) => {
     return "An error occured";
   }
 });
+
+ipcMain.handle("setDefaultOrg", async (event, username) => {
+  try {
+    const cliJsonOutput = await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:config:set defaultusername=${username} --json`
+    );
+    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+  } catch (_error) {
+    return "An error occured";
+  }
+});
+
+ipcMain.handle("listOrgs", async (event) => {
+  try {
+    const cliJsonOutput = await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:org:list --verbose --json`
+    );
+    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+  } catch (_error) {
+    return "An error occured";
+  }
+});
+
+ipcMain.handle("listLimits", async (event) => {
+  try {
+    const cliJsonOutput = await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:limits:api:display --json`
+    );
+    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+  } catch (_error) {
+    return "An error occured";
+  }
+});
+
+ipcMain.handle("setAliasForOrg", async (event, username, alias) => {
+  try {
+    const cliJsonOutput = await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx alias:set ${alias}=${username} --json`
+    );
+    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+  } catch (_error) {
+    return "An error occured";
+  }
+});
+
+ipcMain.handle("openOrg", async (event, username) => {
+  try {
+    const cliJsonOutput = await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:org:open -u ${username}`
+    );
+    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+  } catch (_error) {
+    return "An error occured";
+  }
+});
+
+ipcMain.handle("markScratchForDeletion", async (event, username) => {
+  try {
+    const cliJsonOutput = await exec(
+      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:org:delete -u ${username} --json --noprompt`
+    );
+    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+  } catch (_error) {
+    return "An error occured";
+  }
+});

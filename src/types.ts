@@ -27,6 +27,19 @@ declare global {
       getLog: (channel: string, logId: string) => Promise<string>;
       bulkDeleteLogs: (channel: string) => Promise<void>;
       fetchCurrentUser: (channel: string) => Promise<string>;
+      setDefaultOrg: (channel: string, username: string) => Promise<string>;
+      listLimits: (channel: string) => Promise<string>;
+      listOrgs: (channel: string) => Promise<string>;
+      setAliasForOrg: (
+        channel: string,
+        username: string,
+        alias: string
+      ) => Promise<string>;
+      openOrg: (channel: string, username: string) => Promise<string>;
+      markScratchForDeletion: (
+        channel: string,
+        username: string
+      ) => Promise<string>;
     };
   }
 }

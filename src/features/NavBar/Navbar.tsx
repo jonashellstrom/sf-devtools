@@ -8,9 +8,10 @@ import {
 } from "@nextui-org/react";
 import { useTheme as useNextTheme } from "next-themes";
 import { useLocation, useNavigate } from "react-router-dom";
-import CurrentUser from "../features/CurrentUser";
-import { MoonIcon } from "./MoonIcon";
-import { SunIcon } from "./SunIcon";
+
+import { MoonIcon } from "../../components/MoonIcon";
+import { SunIcon } from "../../components/SunIcon";
+import MiniOrgInfo from "../Dashboard/CurrentUser/MiniOrgInfo";
 
 export const ROUTES = {
   root: "/",
@@ -46,7 +47,7 @@ function Navbar() {
           isActive={currentPath === "/"}
           onClick={() => navigate(ROUTES.root)}
         >
-          Dashboard
+          Org Dashboard
         </NUINavbar.Link>
         <NUINavbar.Link
           isActive={currentPath === "/apex-console"}
@@ -61,28 +62,30 @@ function Navbar() {
           Debug Logs
         </NUINavbar.Link>
       </NUINavbar.Content>
-      <NUINavbar.Content css={{ width: "100px", justifyContent: "flex-end" }}>
-        <CurrentUser />
-        <Col
-          css={{
-            width: "auto",
-          }}
-        >
-          <Switch
-            checked={!isDark}
-            onChange={(e) => setTheme(e.target.checked ? "light" : "dark")}
-            bordered
-            size="sm"
-            color="success"
-            iconOn={<SunIcon />}
-            iconOff={<MoonIcon />}
-          />
-          <Row justify="center" css={{ mt: 5 }}>
-            <Text size="xx-small" b>
-              {isDark ? "DARK" : "LIGHT"}
-            </Text>
-          </Row>
-        </Col>
+      <NUINavbar.Content css={{ width: "180px", justifyContent: "flex-end" }}>
+        <Row>
+          <MiniOrgInfo />
+          <Col
+            css={{
+              width: "auto",
+            }}
+          >
+            <Switch
+              checked={!isDark}
+              onChange={(e) => setTheme(e.target.checked ? "light" : "dark")}
+              bordered
+              size="sm"
+              color="success"
+              iconOn={<SunIcon />}
+              iconOff={<MoonIcon />}
+            />
+            <Row justify="center" css={{ mt: 5 }}>
+              <Text size="xx-small" b>
+                {isDark ? "DARK" : "LIGHT"}
+              </Text>
+            </Row>
+          </Col>
+        </Row>
       </NUINavbar.Content>
     </NUINavbar>
   );
