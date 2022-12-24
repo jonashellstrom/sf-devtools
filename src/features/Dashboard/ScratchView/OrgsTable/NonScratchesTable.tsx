@@ -5,7 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import queries from "../../../../mainApi";
 import { ListOrgsSuccessResponse } from "../../../../shared/sfdxResponses";
 
-type TScratchItem = ListOrgsSuccessResponse["result"]["nonScratchOrgs"][number];
+type NonScratchOrg =
+  ListOrgsSuccessResponse["result"]["nonScratchOrgs"][number];
 
 const COLUMNS = [
   { name: "ORG", uid: "org" },
@@ -24,7 +25,7 @@ function NonScratchesTable() {
       }))
     : [];
 
-  function renderTableCell(org: TScratchItem, columnKey: React.Key) {
+  function renderTableCell(org: NonScratchOrg, columnKey: React.Key) {
     switch (columnKey) {
       case "org":
         return (

@@ -13,10 +13,12 @@ import { useQuery } from "@tanstack/react-query";
 
 import queries from "../../../../mainApi";
 import ScratchExpirationBar from "./ScratchExpirationBar";
-import { TScratchItem } from "../types";
 import OrgDetailModal from "./OrgDetailModal";
 import ScratchActions from "./TableItems/ScratchActions";
 import ScratchActionMenu from "./TableItems/ScratchActionMenu";
+import type { ListOrgsSuccessResponse } from "../../../../shared/sfdxResponses";
+
+type ScratchOrg = ListOrgsSuccessResponse["result"]["scratchOrgs"][number];
 
 const COLUMNS = [
   { name: "ORG", uid: "org" },
@@ -37,9 +39,9 @@ function ScratchesTable() {
     .sort((a, b) => (a.createdDate > b.createdDate ? -1 : 1));
   const { setVisible, bindings } = useModal();
 
-  const [detailedScratch, setDetailedScratch] = useState<TScratchItem>();
+  const [detailedScratch, setDetailedScratch] = useState<ScratchOrg>();
 
-  function renderTableCell(org: TScratchItem, columnKey: React.Key) {
+  function renderTableCell(org: ScratchOrg, columnKey: React.Key) {
     switch (columnKey) {
       case "org":
         return (

@@ -1,15 +1,17 @@
 import { Dropdown, Loading, Row, Text } from "@nextui-org/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import ActionButton, {
   DEFAULT_CONFIRM_TEXT,
 } from "../../../../../components/ActionButton";
-
 import mainApi from "../../../../../mainApi";
-import type { TScratchItem } from "../../types";
 import { DeleteIcon } from "../DeleteIcon";
+import type { ListOrgsSuccessResponse } from "../../../../../shared/sfdxResponses";
+
+type ScratchOrg = ListOrgsSuccessResponse["result"]["scratchOrgs"][number];
 
 type ScratchActionMenuProps = {
-  scratchOrg: TScratchItem;
+  scratchOrg: ScratchOrg;
 };
 
 function ScratchActionMenu({ scratchOrg }: ScratchActionMenuProps) {

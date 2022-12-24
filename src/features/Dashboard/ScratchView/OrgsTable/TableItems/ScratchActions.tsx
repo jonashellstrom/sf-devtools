@@ -3,10 +3,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import ActionButton from "../../../../../components/ActionButton";
 
 import mainApi from "../../../../../mainApi";
-import type { TScratchItem } from "../../types";
+import type { ListOrgsSuccessResponse } from "../../../../../shared/sfdxResponses";
+
+type ScratchOrg = ListOrgsSuccessResponse["result"]["scratchOrgs"][number];
 
 type ScratchActionsProps = {
-  scratchOrg: TScratchItem;
+  scratchOrg: ScratchOrg;
 };
 
 function ScratchActions({ scratchOrg }: ScratchActionsProps) {

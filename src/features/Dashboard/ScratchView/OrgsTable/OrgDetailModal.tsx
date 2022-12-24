@@ -8,13 +8,17 @@ import {
   Tooltip,
 } from "@nextui-org/react";
 
-import { type TScratchItem } from "../types";
 import { EditIcon } from "./EditIcon";
 import { IconButton } from "./IconButton";
 import useWithCopyToClipboard from "../../../../hooks/useWithCopyToClipboard";
+import type { ListOrgsSuccessResponse } from "../../../../shared/sfdxResponses";
+
+type ScratchOrg = ListOrgsSuccessResponse["result"]["scratchOrgs"][number];
+type NonScratchOrg =
+  ListOrgsSuccessResponse["result"]["nonScratchOrgs"][number];
 
 type OrgDetailModalProps = {
-  scratchItem: TScratchItem;
+  scratchItem: ScratchOrg | NonScratchOrg;
   modalBindings: {
     open: boolean;
     onClose: () => void;
