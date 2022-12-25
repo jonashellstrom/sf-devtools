@@ -17,6 +17,7 @@ import SoqlHelper from "./SoqlHelper/SoqlHelper";
 import useDebouncedSaveToLocalStorage from "../../hooks/useDebouncedSaveToLocalStorage";
 import { useMutation } from "@tanstack/react-query";
 import useEditorTheme from "../../hooks/useEditorTheme/useEditorTheme";
+import ApexBookmarks from "./ApexBookmarks/ApexBookmarks";
 
 const CODE_LOCAL_STORAGE_KEY = "@sf-devtools-apex-editor";
 const OUTPUT_LOCAL_STORAGE_KEY = "@sf-devtools-apex-editor-output";
@@ -78,31 +79,43 @@ function ApexEditor() {
   return (
     <Container css={{ pt: 20 }}>
       <Row justify="space-between">
-        <Text h5 b>
-          Apex Editor
-        </Text>
-        <Button
-          size="xs"
-          auto
-          css={{ fontSize: "x-small", fontWeight: "$bold", minWidth: "77px" }}
-          flat
-          onPress={() => {
-            setTheme(
-              currentTheme === themes.GITHUB ? themes.NIGHT_OWL : themes.GITHUB
-            );
-          }}
-        >
-          THEME
-        </Button>
-        <Button
-          size="xs"
-          auto
-          css={{ fontSize: "x-small", fontWeight: "$bold", minWidth: "77px" }}
-          flat
-          onPress={() => setIsExpanded(!isExpanded)}
-        >
-          {isExpanded ? "COLLAPSE" : "EXPAND"}
-        </Button>
+        <Row justify="flex-start">
+          <Text h5 b css={{ mr: 10 }}>
+            Apex Editor
+          </Text>
+          <ApexBookmarks />
+        </Row>
+        <Row justify="flex-end" align="center">
+          <Button
+            size="xs"
+            auto
+            css={{ fontSize: "x-small", fontWeight: "$bold", minWidth: "77px" }}
+            flat
+            onPress={() => {
+              setTheme(
+                currentTheme === themes.GITHUB
+                  ? themes.NIGHT_OWL
+                  : themes.GITHUB
+              );
+            }}
+          >
+            THEME
+          </Button>
+          <Button
+            size="xs"
+            auto
+            css={{
+              fontSize: "x-small",
+              fontWeight: "$bold",
+              minWidth: "77px",
+              ml: 10,
+            }}
+            flat
+            onPress={() => setIsExpanded(!isExpanded)}
+          >
+            {isExpanded ? "COLLAPSE" : "EXPAND"}
+          </Button>
+        </Row>
       </Row>
       <CodeEditor
         code={code}

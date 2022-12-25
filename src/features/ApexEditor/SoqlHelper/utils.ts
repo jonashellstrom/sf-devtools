@@ -20,17 +20,6 @@ export const SOQL_QUERY_OPTIONS: SoqlQueryOption[] = [
   },
 ];
 
-export const ADD_NEW_OPTION: SoqlQueryOption = {
-  sObject: "AddNew",
-  plural: "",
-};
-
-export function getOptionsWithoutAddOption(
-  options: readonly SoqlQueryOption[]
-) {
-  return options.filter((opt) => opt.sObject !== ADD_NEW_OPTION.sObject);
-}
-
 export function setOptionsInLocalStorage(options: readonly SoqlQueryOption[]) {
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(options));
 }

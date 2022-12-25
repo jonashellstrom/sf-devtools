@@ -1,5 +1,6 @@
-import { Dropdown, Row, Text, Tooltip } from "@nextui-org/react";
 import { useState } from "react";
+import { Dropdown, Row, Text, Tooltip } from "@nextui-org/react";
+
 import { DeleteIcon } from "../../../components/icons/DeleteIcon";
 import { IconButton } from "../../Dashboard/ScratchView/IconButton";
 import AddSoqlOptionModal from "./AddSoqlOptionModal";
@@ -7,10 +8,8 @@ import {
   type SoqlQueryOption,
   LOCAL_STORAGE_KEY,
   SOQL_QUERY_OPTIONS,
-  ADD_NEW_OPTION,
-  getOptionsWithoutAddOption,
   setOptionsInLocalStorage,
-} from "./shared";
+} from "./utils";
 
 type SoqlHelperProps = {
   appendCode: (query: string) => void;
@@ -25,9 +24,9 @@ function makeDefaultQuery(opt: SoqlQueryOption) {
 function getInitialOptions(): SoqlQueryOption[] {
   const localStore = localStorage.getItem(LOCAL_STORAGE_KEY);
   if (localStore) {
-    return [...JSON.parse(localStore), ADD_NEW_OPTION];
+    return [...JSON.parse(localStore)];
   } else {
-    return [...SOQL_QUERY_OPTIONS, ADD_NEW_OPTION];
+    return [...SOQL_QUERY_OPTIONS];
   }
 }
 
@@ -35,53 +34,33 @@ function SoqlHelper({ appendCode }: SoqlHelperProps) {
   const [options, setOptions] = useState(getInitialOptions);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  function getSoqlOptionText(opt: SoqlQueryOption) {
-    return opt.sObject === "AddNew"
-      ? "+ Add New Object"
-      : `Query ${opt.sObject}`;
-  }
-
-  function handleOnSoqlOptionClick(opt: SoqlQueryOption) {
-    return opt.sObject === "AddNew"
-      ? setIsModalOpen(true)
-      : appendCode(makeDefaultQuery(opt));
-  }
-
   function handleOnSoqlOptionDelete(opt: SoqlQueryOption) {
-    const filteredOptions = getOptionsWithoutAddOption(options).filter(
-      (o) => o.sObject !== opt.sObject
-    );
+    const filteredOptions = options.filter((o) => o.sObject !== opt.sObject);
     setOptionsInLocalStorage([...filteredOptions]);
-    setOptions([...filteredOptions, ADD_NEW_OPTION]);
+    setOptions([...filteredOptions]);
   }
 
   function renderDropdownItem(opt: SoqlQueryOption) {
     return (
-      <Dropdown.Item
-        key={opt.sObject}
-        textValue={opt.sObject}
-        color={opt.sObject === "AddNew" ? "success" : "primary"}
-      >
+      <Dropdown.Item key={opt.sObject} textValue={opt.sObject} color="primary">
         <Row justify="space-between" align="center">
           <Text
             color="primary"
-            onClick={() => handleOnSoqlOptionClick(opt)}
+            onClick={() => appendCode(makeDefaultQuery(opt))}
             css={{ width: "100%" }}
           >
-            {getSoqlOptionText(opt)}
+            {`Query ${opt.sObject}`}
           </Text>
-          {opt.sObject !== "AddNew" && (
-            <Tooltip
-              content="Delete"
-              color="error"
-              onClick={() => handleOnSoqlOptionDelete(opt)}
-              css={{ zIndex: "10000000 !important" }}
-            >
-              <IconButton>
-                <DeleteIcon size={16} fill="#BF4C30" />
-              </IconButton>
-            </Tooltip>
-          )}
+          <Tooltip
+            content="Delete"
+            color="error"
+            onClick={() => handleOnSoqlOptionDelete(opt)}
+            css={{ zIndex: "10000000 !important" }}
+          >
+            <IconButton>
+              <DeleteIcon size={16} fill="#BF4C30" />
+            </IconButton>
+          </Tooltip>
         </Row>
       </Dropdown.Item>
     );
@@ -105,7 +84,26 @@ function SoqlHelper({ appendCode }: SoqlHelperProps) {
           Insert SOQL
         </Dropdown.Button>
         <Dropdown.Menu aria-label="Static Actions">
-          {options.map((opt) => renderDropdownItem(opt))}
+          {[
+            ...options.map((opt) => renderDropdownItem(opt)),
+            <Dropdown.Item
+              key="add-new-soql"
+              color="success"
+              withDivider
+              textValue="Add New"
+              icon={<DeleteIcon size={16} fill="currentColor" />}
+            >
+              <Row justify="space-between" align="center">
+                <Text
+                  color="currentColor"
+                  onClick={() => setIsModalOpen(true)}
+                  css={{ width: "100%" }}
+                >
+                  Add New Object
+                </Text>
+              </Row>
+            </Dropdown.Item>,
+          ]}
         </Dropdown.Menu>
       </Dropdown>
     </>

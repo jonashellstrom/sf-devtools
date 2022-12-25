@@ -8,12 +8,7 @@ import {
   Text,
 } from "@nextui-org/react";
 
-import {
-  type SoqlQueryOption,
-  ADD_NEW_OPTION,
-  setOptionsInLocalStorage,
-  getOptionsWithoutAddOption,
-} from "./shared";
+import { type SoqlQueryOption, setOptionsInLocalStorage } from "./utils";
 
 type AddSoqlOptionModalProps = {
   isModalOpen: boolean;
@@ -35,9 +30,8 @@ function AddSoqlOptionModal({
 
   function handleAddNewPress() {
     if (newOption.sObject && newOption.plural) {
-      const optionsWithoutAddOption = getOptionsWithoutAddOption(options);
-      setOptionsInLocalStorage([...optionsWithoutAddOption, newOption]);
-      setOptions([...optionsWithoutAddOption, newOption, ADD_NEW_OPTION]);
+      setOptionsInLocalStorage([...options, newOption]);
+      setOptions([...options, newOption]);
       setIsModalOpen(false);
     }
   }
