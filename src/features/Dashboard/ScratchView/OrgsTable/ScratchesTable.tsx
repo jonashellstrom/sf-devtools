@@ -82,9 +82,12 @@ function ScratchesTable() {
         );
       case "actions":
         return (
-          <Row>
+          <Row justify="flex-end" css={{ width: "auto" }}>
             <ScratchActions scratchOrg={org} />
-            <ScratchActionMenu scratchOrg={org} />
+            <ScratchActionMenu
+              scratchOrg={org}
+              setVisibleDetailsModal={setVisible}
+            />
           </Row>
         );
       default:

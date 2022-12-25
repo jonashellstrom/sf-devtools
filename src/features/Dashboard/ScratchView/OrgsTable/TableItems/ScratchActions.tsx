@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import ActionButton from "../../../../../components/ActionButton";
 
 import mainApi from "../../../../../mainApi";
+import queryKeys from "../../../../../shared/queryKeys";
 import type { ListOrgsSuccessResponse } from "../../../../../shared/sfdxResponses";
 
 type ScratchOrg = ListOrgsSuccessResponse["result"]["scratchOrgs"][number];
@@ -18,11 +19,12 @@ function ScratchActions({ scratchOrg }: ScratchActionsProps) {
     useMutation((orgUsername: string) => mainApi.setDefaultOrg(orgUsername), {
       onSuccess() {
         queryClient.invalidateQueries(["current-user"]);
+        queryClient.invalidateQueries([queryKeys.TRACE_FLAGS]);
       },
     });
 
   return (
-    <Row justify="flex-end" align="center" css={{ ml: 10 }}>
+    <Row css={{ width: "auto" }}>
       <ActionButton
         text="MAKE DEFAULT"
         minWidth={100}

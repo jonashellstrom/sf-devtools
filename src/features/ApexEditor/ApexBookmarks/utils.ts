@@ -3,10 +3,10 @@ export type BookmarkedApex = {
   code: string;
 };
 
-const LOCAL_STORAGE_KEY = "@sf-devtools-bookmarked-apex";
+export const BOOKMARKS_LOCAL_STORAGE_KEY = "@sf-devtools-bookmarked-apex";
 
-export function setOptionsInLocalStorage(options: readonly BookmarkedApex[]) {
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(options));
+export function setBookmarksInLocalStorage(options: readonly BookmarkedApex[]) {
+  localStorage.setItem(BOOKMARKS_LOCAL_STORAGE_KEY, JSON.stringify(options));
 }
 
 const STOP_ALL_CRON_JOBS = `

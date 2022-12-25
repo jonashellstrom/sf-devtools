@@ -7,19 +7,19 @@ import {
   Spacer,
   Text,
 } from "@nextui-org/react";
-import { BookmarkedApex, setOptionsInLocalStorage } from "./utils";
+import { BookmarkedApex, setBookmarksInLocalStorage } from "./utils";
 import CodeEditor from "../CodeEditor";
 
 type ApexBookmarkModalProps = {
   isModalOpen: boolean;
   setIsModalOpen: (val: boolean) => void;
-  options: BookmarkedApex[];
-  setOptions: (options: BookmarkedApex[]) => void;
+  bookmarks: BookmarkedApex[];
+  setBookmarks: (bookmarks: BookmarkedApex[]) => void;
 };
 
 function ApexBookmarkModal({
-  options,
-  setOptions,
+  bookmarks,
+  setBookmarks,
   isModalOpen,
   setIsModalOpen,
 }: ApexBookmarkModalProps) {
@@ -33,8 +33,8 @@ function ApexBookmarkModal({
         name,
         code,
       };
-      setOptionsInLocalStorage([...options, newBookmark]);
-      setOptions([...options, newBookmark]);
+      setBookmarksInLocalStorage([...bookmarks, newBookmark]);
+      setBookmarks([...bookmarks, newBookmark]);
       setIsModalOpen(false);
     }
   }

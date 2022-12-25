@@ -20,16 +20,16 @@ function ScratchExpirationBar({ expirationDate }: ScratchExpirationBarProps) {
 
   return (
     <Container gap={0} direction="column" alignItems="flex-end">
-      <Text size="x-small">{`${expirationDate}`}</Text>
+      <Text size="small">{`${expirationDate}`}</Text>
       <Progress
         size="xs"
         value={remainingPercentage * 100}
         color={getColorBasedOnExpiration(remainingPercentage)}
       />
       {remainingPercentage < 0 ? (
-        <Text size="x-small">{`Expired`}</Text>
+        <Text size="small">{`Expired`}</Text>
       ) : (
-        <Text size="x-small">{`Expires ${date.toRelative()}`}</Text>
+        <Text size="small">{`Expires ${date.toRelative()}`}</Text>
       )}
     </Container>
   );
