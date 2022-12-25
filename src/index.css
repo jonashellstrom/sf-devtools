@@ -7,6 +7,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.w-tc-editor-preview pre code {
+  font-size: 12px;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
@@ -22,4 +26,22 @@ pre {
 pre code {
   padding: 0;
   white-space: inherit;
+}
+
+.collapse {
+  width: 100%;
+  overflow: hidden;
+  transition: 500ms max-height;
+}
+
+.collapse > div {
+  overflow: auto;
+}
+
+[data-color-mode*="light"] .w-tc-editor {
+  background-color: #f4f4f4;
+}
+
+[data-color-mode*="dark"] .w-tc-editor {
+  background-color: #081f3e;
 }

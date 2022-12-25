@@ -1,0 +1,63 @@
+/* GITHUB THEME */
+[data-color-mode*="light"] .github {
+  color: #24292f;
+  background-color: #f6f8fa;
+  --color-fg-default: #24292f;
+  --color-canvas-subtle: #f6f8fa;
+  --color-prettylights-syntax-comment: #6e7781;
+  --color-prettylights-syntax-entity-tag: #116329;
+  --color-prettylights-syntax-entity: #8250df;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #777d83;
+  --color-prettylights-syntax-constant: #0550ae;
+  --color-prettylights-syntax-variable: #0550ae;
+  --color-prettylights-syntax-string: #0a3069;
+  --color-prettylights-syntax-keyword: #cf222e;
+  --color-prettylights-syntax-markup-bold: #24292f;
+}
+[data-color-mode*="dark"] .github {
+  color: #c9d1d9;
+  background-color: #161b22;
+  --color-fg-default: #c9d1d9;
+  --color-canvas-subtle: #161b22;
+  --color-prettylights-syntax-comment: #8b949e;
+  --color-prettylights-syntax-entity-tag: #7ee787;
+  --color-prettylights-syntax-entity: #d2a8ff;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #484f58;
+  --color-prettylights-syntax-constant: #79c0ff;
+  --color-prettylights-syntax-variable: #79c0ff;
+  --color-prettylights-syntax-string: #a5d6ff;
+  --color-prettylights-syntax-keyword: #ff7b72;
+  --color-prettylights-syntax-markup-bold: #c9d1d9;
+}
+
+/* NIGHT OWL THEME */
+[data-color-mode*="light"] .night-owl-theme {
+  color: #403f53;
+  background-color: #f0f0f0;
+  --color-fg-default: #403f53;
+  --color-canvas-subtle: #f0f0f0;
+  --color-prettylights-syntax-comment: #637777;
+  --color-prettylights-syntax-entity-tag: #4876d6;
+  --color-prettylights-syntax-entity: #5c38c1;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #777686;
+  --color-prettylights-syntax-constant: #4876d6;
+  --color-prettylights-syntax-variable: #4876d6;
+  --color-prettylights-syntax-string: #4876d6;
+  --color-prettylights-syntax-keyword: #a94cc3;
+  --color-prettylights-syntax-markup-bold: #4876d6;
+}
+[data-color-mode*="dark"] .night-owl-theme {
+  color: #d6deeb;
+  background-color: #0b253a;
+  --color-fg-default: #d6deeb;
+  --color-canvas-subtle: #0b253a;
+  --color-prettylights-syntax-comment: #637777;
+  --color-prettylights-syntax-entity-tag: #f78c6c;
+  --color-prettylights-syntax-entity: #ffcb8b;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #8a919c;
+  --color-prettylights-syntax-constant: #82aaff;
+  --color-prettylights-syntax-variable: #c5e478;
+  --color-prettylights-syntax-string: #ecc48d;
+  --color-prettylights-syntax-keyword: #c792ea;
+  --color-prettylights-syntax-markup-bold: #c5e478;
+}

@@ -16,24 +16,39 @@ import CodeEditor from "./CodeEditor";
 import SoqlHelper from "./SoqlHelper/SoqlHelper";
 import useDebouncedSaveToLocalStorage from "../../hooks/useDebouncedSaveToLocalStorage";
 import { useMutation } from "@tanstack/react-query";
+import useEditorTheme from "../../hooks/useEditorTheme/useEditorTheme";
 
-const LOCAL_STORAGE_KEY = "@sf-devtools-apex-editor";
+const CODE_LOCAL_STORAGE_KEY = "@sf-devtools-apex-editor";
+const OUTPUT_LOCAL_STORAGE_KEY = "@sf-devtools-apex-editor-output";
+const IS_EXPANDED_LOCAL_STORAGE_KEY = "@sf-devtools-apex-editor-is-expanded";
+
 const PLACEHOLDER_APEX = `final String greeting = 'Hello world!';\nSystem.debug(greeting);`;
 
 const getInitialCode = () =>
-  localStorage.getItem(LOCAL_STORAGE_KEY) || PLACEHOLDER_APEX;
+  localStorage.getItem(CODE_LOCAL_STORAGE_KEY) || PLACEHOLDER_APEX;
+const getInitialOutput = () =>
+  localStorage.getItem(OUTPUT_LOCAL_STORAGE_KEY) || "";
+const getInitialIsEditorExpanded = () =>
+  localStorage.getItem(IS_EXPANDED_LOCAL_STORAGE_KEY) === "true" || false;
 
 function ApexEditor() {
   const [code, setCode] = useState<string>(getInitialCode);
-  const [output, setOutput] = useState<string>();
+  const [output, setOutput] = useState<string>(getInitialOutput);
   const [shouldShowRawOutput, setShouldShowRawOutput] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(getInitialIsEditorExpanded);
 
-  useDebouncedSaveToLocalStorage(LOCAL_STORAGE_KEY, code);
+  useDebouncedSaveToLocalStorage(CODE_LOCAL_STORAGE_KEY, code, 2000);
+  useDebouncedSaveToLocalStorage(OUTPUT_LOCAL_STORAGE_KEY, output, 0);
+  useDebouncedSaveToLocalStorage(
+    IS_EXPANDED_LOCAL_STORAGE_KEY,
+    `${isExpanded}`,
+    1000
+  );
 
   const { handleOnPress, CopyToClipboardWrapper } = useWithCopyToClipboard();
 
   const { mutate: runAnonymous, isLoading } = useMutation(
-    mainApi.runAnonymous,
+    () => mainApi.runAnonymous(code),
     {
       onMutate: () => {
         setOutput("Running ...");
@@ -46,7 +61,9 @@ function ApexEditor() {
           if (shouldShowRawOutput) setOutput(data.result.logs);
           else setOutput(utils.getOnlyDebugLogLines(data.result.logs));
         } else if (!data.result.compiled) {
-          setOutput(`⛔️ Compile error: ${data.result.compileProblem}`);
+          setOutput(
+            `⛔️ Compile error on line ${data.result.line}: ${data.result.compileProblem}`
+          );
         } else {
           setOutput(
             `⛔️ ${data.result.exceptionMessage}\n🔖 ${data.result.exceptionStackTrace}`
@@ -56,29 +73,54 @@ function ApexEditor() {
     }
   );
 
+  const { themes, currentTheme, setTheme } = useEditorTheme();
+
   return (
-    <Container css={{ pt: 30 }}>
+    <Container css={{ pt: 20 }}>
       <Row justify="space-between">
         <Text h5 b>
           Apex Editor
         </Text>
+        <Button
+          size="xs"
+          auto
+          css={{ fontSize: "x-small", fontWeight: "$bold", minWidth: "77px" }}
+          flat
+          onPress={() => {
+            setTheme(
+              currentTheme === themes.GITHUB ? themes.NIGHT_OWL : themes.GITHUB
+            );
+          }}
+        >
+          THEME
+        </Button>
+        <Button
+          size="xs"
+          auto
+          css={{ fontSize: "x-small", fontWeight: "$bold", minWidth: "77px" }}
+          flat
+          onPress={() => setIsExpanded(!isExpanded)}
+        >
+          {isExpanded ? "COLLAPSE" : "EXPAND"}
+        </Button>
       </Row>
       <CodeEditor
         code={code}
         setCode={setCode}
         language="apex"
         placeholder="Write your anonymous Apex here!"
-        minHeight={330}
+        minHeight={isExpanded ? 600 : 330}
       />
       <Row justify="space-between" css={{ pb: 15 }}>
         <Row>
           <Button
-            onPress={() => runAnonymous(code)}
+            onPress={() => runAnonymous()}
             disabled={isLoading}
             auto
             css={{
               mr: 10,
               borderRadius: 5,
+              minWidth: "75px",
             }}
             size="sm"
           >

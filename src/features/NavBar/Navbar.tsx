@@ -8,9 +8,9 @@ import {
 } from "@nextui-org/react";
 import { useTheme as useNextTheme } from "next-themes";
 import { useLocation, useNavigate } from "react-router-dom";
+import { MoonIcon } from "../../components/icons/MoonIcon";
+import { SunIcon } from "../../components/icons/SunIcon";
 
-import { MoonIcon } from "../../components/MoonIcon";
-import { SunIcon } from "../../components/SunIcon";
 import MiniOrgInfo from "../Dashboard/CurrentUser/MiniOrgInfo";
 
 export const ROUTES = {

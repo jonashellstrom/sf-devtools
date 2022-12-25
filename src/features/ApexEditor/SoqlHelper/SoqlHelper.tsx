@@ -1,7 +1,7 @@
 import { Dropdown, Row, Text, Tooltip } from "@nextui-org/react";
 import { useState } from "react";
-import { DeleteIcon } from "../../ScratchView/DeleteIcon";
-import { IconButton } from "../../ScratchView/IconButton";
+import { DeleteIcon } from "../../../components/icons/DeleteIcon";
+import { IconButton } from "../../Dashboard/ScratchView/IconButton";
 import AddSoqlOptionModal from "./AddSoqlOptionModal";
 import {
   type SoqlQueryOption,
@@ -78,7 +78,7 @@ function SoqlHelper({ appendCode }: SoqlHelperProps) {
               css={{ zIndex: "10000000 !important" }}
             >
               <IconButton>
-                <DeleteIcon size={20} fill="#FF0080" />
+                <DeleteIcon size={16} fill="#BF4C30" />
               </IconButton>
             </Tooltip>
           )}
