@@ -40,7 +40,7 @@ function ApexEditorActionRow() {
         toggleIsRunCodeLoading(false);
         if (data.result.success) {
           if (shouldShowRawOutput) setOutput(data.result.logs);
-          else setOutput(utils.getOnlyDebugLogLines(data.result.logs));
+          else setOutput(utils.getOnlyDebugAndErrorLogLines(data.result.logs));
         } else if (!data.result.compiled) {
           setOutput(
             `⛔️ Compile error on line ${data.result.line}: ${data.result.compileProblem}`

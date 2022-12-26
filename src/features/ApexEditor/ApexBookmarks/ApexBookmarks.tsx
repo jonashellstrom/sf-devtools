@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Dropdown, Text, useModal } from "@nextui-org/react";
 
-import { DeleteIcon } from "../../../components/icons/DeleteIcon";
 import ApexBookmarkModal from "./ApexBookmarkModal";
 import { type BookmarkedApex, DEFAULT_BOOKMARKED_APEX } from "./utils";
 import ApexBookmarkItem from "./ApexBookmarkItem";
@@ -58,7 +57,6 @@ function ApexBookmarks() {
               textValue="add new bookmark"
               withDivider
               color="success"
-              icon={<DeleteIcon size={16} fill="currentColor" />}
             >
               <Text color="currentColor" onClick={() => setVisible(true)}>
                 Add New Bookmark

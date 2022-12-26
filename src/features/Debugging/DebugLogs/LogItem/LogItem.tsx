@@ -27,13 +27,13 @@ type LogItemProps = {
   isLoading: boolean;
 };
 
-const EDITOR_HEIGHT = 110;
+const EDITOR_HEIGHT = 150;
 
 function LogItem({ log, isLoading }: LogItemProps) {
   const queryClient = useQueryClient();
 
   const logs = log?.result[0].log || "";
-  const debugLinesOnly = utils.getOnlyDebugLogLines(logs);
+  const debugLinesOnly = utils.getOnlyDebugAndErrorLogLines(logs);
 
   const [isShowingPrompt, setIsShowingPrompt] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,11 +52,14 @@ function LogItem({ log, isLoading }: LogItemProps) {
 
   return (
     <>
-      <FullLogModal
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-        log={log && { ...log }}
-      />
+      {log && (
+        <FullLogModal
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+          logId={log?.logData.Id}
+          logData={log?.logData}
+        />
+      )}
       <CollapsingWrapper isOpen={isCollapsibleOpen} initialHeight={14}>
         <Card
           variant="bordered"
@@ -141,41 +144,60 @@ function LogItem({ log, isLoading }: LogItemProps) {
               )}
             </Col>
             <Row>
-              <Row>
+              <Row css={{ width: "75%" }}>
                 {log ? (
                   <>
-                    <Text size="$xs" b>
-                      {`💻 ${log.logData.Application}`}
-                    </Text>
-                    <Text size="$xs" b css={{ ml: 10 }}>
-                      {`📤 ${log.logData.Request}`}
+                    <Text
+                      size="$xs"
+                      b
+                      css={{
+                        width: "25%",
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {`Application: ${log.logData.Application}`}
                     </Text>
                     <Text
                       size="$xs"
                       b
                       css={{
                         ml: 10,
-                        maxWidth: "180px",
+                        width: "25%",
                         overflow: "hidden",
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis",
                       }}
                     >
-                      {`🗂 ${log ? log.logData.Operation : "Loading"}`}
+                      {`Request: ${log.logData.Request}`}
+                    </Text>
+                    <Text
+                      size="$xs"
+                      b
+                      css={{
+                        ml: 10,
+                        width: "50%",
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {`Operation: ${log ? log.logData.Operation : "Loading"}`}
                     </Text>
                   </>
                 ) : (
-                  <>
-                    <TextSkeleton width={50} emoji={"💻"} />
-                    <TextSkeleton width={50} emoji={"📤"} />
-                    <TextSkeleton width={50} emoji={"🗂"} />
-                  </>
+                  <Row>
+                    <TextSkeleton width={40} emoji={"Application"} />
+                    <TextSkeleton width={40} emoji={"Request"} />
+                    <TextSkeleton width={90} emoji={"Operation"} />
+                  </Row>
                 )}
               </Row>
-              <Row justify="flex-end">
+              <Row justify="flex-end" css={{ width: "25%" }}>
                 <Text size="$xs" b css={{ ml: 10 }}>
                   {log
-                    ? `⏱ ${DateTime.fromISO(log.logData.StartTime).toFormat(
+                    ? `${DateTime.fromISO(log.logData.StartTime).toFormat(
                         "LLL d, yyyy 'at' h:mm:ss a"
                       )}`
                     : "Loading"}

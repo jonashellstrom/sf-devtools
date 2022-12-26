@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useTheme } from "@nextui-org/react";
 
 import useDebouncedSaveToLocalStorage from "../../hooks/useDebouncedSaveToLocalStorage";
 import { LOCAL_STORAGE_KEYS } from "../../shared/constants";
@@ -11,7 +10,6 @@ export enum Theme {
   NIGHT_OWL = "NIGHT_OWL",
 }
 
-const COLOR_MODE_ATTRIBUTE = "data-color-mode";
 const TEXT_EDITOR_CSS_CLASS_NAME = "w-tc-editor-preview";
 const THEME_CLASS_NAMES = {
   GITHUB: "github-theme",
@@ -24,12 +22,6 @@ function getInitialTheme() {
 
 function useEditorTheme() {
   const [theme, setTheme] = useState(getInitialTheme);
-  const { isDark } = useTheme();
-
-  document.documentElement.setAttribute(
-    COLOR_MODE_ATTRIBUTE,
-    isDark ? "dark" : "light"
-  );
 
   useDebouncedSaveToLocalStorage(LOCAL_STORAGE_KEYS.EDITOR_THEME, theme, 0);
 

@@ -1,12 +1,14 @@
-import { Loading } from "@nextui-org/react";
+import { Loading, useTheme } from "@nextui-org/react";
 import ReactCodeEditor, {
   TextareaCodeEditorProps,
 } from "@uiw/react-textarea-code-editor";
 
+const COLOR_MODE_ATTRIBUTE = "data-color-mode";
+
 type CodeEditorProps = {
   code: string;
   placeholder: string;
-  language: TextareaCodeEditorProps["language"];
+  language?: TextareaCodeEditorProps["language"];
   setCode?: (code: string) => void;
   isLoading?: boolean;
   isDisabled?: boolean;
@@ -29,6 +31,13 @@ function CodeEditor({
   isDisabled,
   minHeight = 270,
 }: CodeEditorProps) {
+  const { isDark } = useTheme();
+
+  document.documentElement.setAttribute(
+    COLOR_MODE_ATTRIBUTE,
+    isDark ? "dark" : "light"
+  );
+
   const shouldUnsetLanguageParsingForPerformanceOptimization =
     code.length > 8_000;
 

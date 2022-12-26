@@ -91,7 +91,6 @@ function SoqlHelper({ appendCode }: SoqlHelperProps) {
               color="success"
               withDivider
               textValue="Add New"
-              icon={<DeleteIcon size={16} fill="currentColor" />}
             >
               <Row justify="space-between" align="center">
                 <Text

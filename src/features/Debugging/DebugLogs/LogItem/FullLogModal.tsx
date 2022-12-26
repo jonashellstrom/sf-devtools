@@ -1,19 +1,30 @@
 import { Modal, Row, Text } from "@nextui-org/react";
+import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
+import mainApi from "../../../../mainApi";
 
 import { type GetLogResponse } from "../../../../shared/sfdxResponses";
-import utils from "../../../../shared/utils";
-import CodeEditor from "../../../ApexEditor/CodeEditor";
 
 type FullLogModalProps = {
   isModalOpen: boolean;
   setIsModalOpen: (val: boolean) => void;
-  log: GetLogResponse | undefined;
+  logId: string;
+  logData: GetLogResponse["logData"];
 };
 
-function FullLogModal({ isModalOpen, setIsModalOpen, log }: FullLogModalProps) {
-  const logs = log?.result[0].log || "";
-  const debugLinesOnly = utils.getOnlyDebugLogLines(logs);
+function FullLogModal({
+  isModalOpen,
+  setIsModalOpen,
+  logId,
+  logData,
+}: FullLogModalProps) {
+  const { data } = useQuery(["log-id", logId], () =>
+    mainApi.getLog(logId, logData)
+  );
+
+  const logs = data?.result[0].log || "";
+
+  const debugLinesOnly = logs;
 
   return (
     <Modal
@@ -33,47 +44,50 @@ function FullLogModal({ isModalOpen, setIsModalOpen, log }: FullLogModalProps) {
             b
             css={{ width: "100%", textAlign: "start" }}
           >
-            {`Log Group: ${log?.logData.Id}`}
+            {`Log Group: ${logData.Id}`}
           </Text>
           <Row justify="flex-end">
-            <Text size="$xs" b>
-              {`💻 ${log?.logData.Application}`}
+            <Text size="$xs" b css={{ ml: 10 }}>
+              {`Size: ${new Blob([debugLinesOnly]).size} bytes`}
             </Text>
             <Text size="$xs" b css={{ ml: 10 }}>
-              {`📤 ${log?.logData.Request}`}
-            </Text>
-            <Text
-              size="$xs"
-              b
-              css={{
-                ml: 10,
-                maxWidth: "120px",
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {`🗂 ${log?.logData.Operation}`}
-            </Text>
-            <Text size="$xs" b css={{ ml: 10 }}>
-              {log
-                ? `⏱ ${DateTime.fromISO(log.logData.StartTime).toFormat(
-                    "LLL d, yyyy 'at' h:mm:ss a"
-                  )}`
-                : "..."}
+              {DateTime.fromISO(logData.StartTime).toFormat(
+                "LLL d, yyyy 'at' h:mm:ss a"
+              )}
             </Text>
           </Row>
         </Row>
       </Modal.Header>
       <Modal.Body css={{ pt: 10 }}>
-        <CodeEditor
-          language="apex"
-          code={debugLinesOnly}
-          placeholder={"No debug logs"}
-          isDisabled
-          minHeight={530}
+        <textarea
+          value={debugLinesOnly}
+          disabled
+          style={{ minHeight: 530, fontSize: "12px" }}
         />
       </Modal.Body>
+      <Modal.Footer>
+        <Row justify="flex-start">
+          <Text size="$xs" b>
+            {`Application: ${logData.Application}`}
+          </Text>
+          <Text size="$xs" b css={{ ml: 10 }}>
+            {`Request: ${logData.Request}`}
+          </Text>
+          <Text
+            size="$xs"
+            b
+            css={{
+              ml: 10,
+              maxWidth: "250px",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {`Operation: ${logData.Operation}`}
+          </Text>
+        </Row>
+      </Modal.Footer>
     </Modal>
   );
 }
