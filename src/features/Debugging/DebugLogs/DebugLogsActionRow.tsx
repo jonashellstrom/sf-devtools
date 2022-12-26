@@ -31,7 +31,7 @@ function DebugLogsActionRow({
       </Row>
       <Row justify="space-between">
         <Text size="$xs" css={{ mb: 5, opacity: 0.7 }} b>
-          {`${logGroupCount} total log groups fetched`}
+          {`Total ${logGroupCount} log groups fetched`}
         </Text>
       </Row>
     </>

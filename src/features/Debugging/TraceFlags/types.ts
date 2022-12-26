@@ -45,4 +45,5 @@ export type NewTraceFlag = {
   endTime: DateTime;
   debugLevelId: string;
   tracedEntityId: string;
+  tracedEntityName: string;
 };

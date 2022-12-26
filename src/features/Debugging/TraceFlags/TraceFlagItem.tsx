@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Badge,
   Button,
@@ -10,11 +11,10 @@ import {
 } from "@nextui-org/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DateTime } from "luxon";
-import { useState } from "react";
 
 import mainApi from "../../../mainApi";
 import queryKeys from "../../../shared/queryKeys";
-
+import CollapsingWrapper from "../DebugLogs/LogItem/CollapsingWrapper";
 import { type TraceFlag } from "./types";
 import utils from "./utils";
 
@@ -46,7 +46,9 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
     () => mainApi.deleteRecord("TraceFlag", traceFlag.Id, true),
     {
       onSuccess() {
-        queryClient.invalidateQueries({ queryKey: [queryKeys.TRACE_FLAGS] });
+        queryClient
+          .invalidateQueries({ queryKey: [queryKeys.TRACE_FLAGS] })
+          .then(() => setIsCollapsibleOpen(true));
       },
     }
   );
@@ -57,96 +59,70 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
     );
   }, 5000);
 
+  const [isCollapsibleOpen, setIsCollapsibleOpen] = useState(true);
+
   return (
-    <Card variant="bordered" css={{ mb: 15 }}>
-      <Card.Body>
-        <Row align="flex-start" justify="space-between">
-          <Col css={{ mr: 10 }}>
-            <Text size="$m" b>
-              {`${traceFlag.Id}`}
-            </Text>
-            <Row>
-              <Badge
-                size="xs"
-                color="primary"
-                css={{ mb: 5, mt: 2.5 }}
-                isSquared
-              >{`${traceFlag.LogType}`}</Badge>
-            </Row>
-          </Col>
-          {/* <Col>
-            <Text size="$sm">Traced Entity</Text>
-            <pre
-              style={{ fontSize: "10px" }}
-            >{`${traceFlag.TracedEntity.Name}`}</pre>
-            <pre
-              style={{ fontSize: "10px" }}
-            >{`${traceFlag.TracedEntityId}`}</pre>
-          </Col>
-          <Col css={{ ml: 10 }}>
-            <Text size="$sm">Debug Levels</Text>
-            <pre
-              style={{ fontSize: "7.5px" }}
-            >{`ApexCode: ${traceFlag.ApexCode}`}</pre>
-            <pre
-              style={{ fontSize: "7.5px" }}
-            >{`ApexProfiling: ${traceFlag.ApexProfiling}`}</pre>
-            <pre
-              style={{ fontSize: "7.5px" }}
-            >{`Callout: ${traceFlag.Callout}`}</pre>
-          </Col>
-          <Col>
-            <pre
-              style={{ fontSize: "7.5px", marginTop: "23px" }}
-            >{`System: ${traceFlag.System}`}</pre>
-            <pre
-              style={{ fontSize: "7.5px" }}
-            >{`Validation: ${traceFlag.Validation}`}</pre>
-            <pre
-              style={{ fontSize: "7.5px" }}
-            >{`Visualforce: ${traceFlag.Visualforce}`}</pre>
-          </Col> */}
-          <Col>
-            <Row align="center">
-              <Text size="$sm" css={{ mr: 5 }}>
-                {isFuture ? "Upcoming" : isExpired ? "Expired" : "Active"}
+    <CollapsingWrapper isOpen={isCollapsibleOpen} initialHeight={7}>
+      <Card variant="bordered" css={{ mb: 15 }}>
+        <Card.Body>
+          <Row align="flex-start" justify="space-between">
+            <Col css={{ mr: 10 }}>
+              <Text size="$m" b>
+                {`${traceFlag.Id}`}
               </Text>
-              {!isFuture && !isExpired && (
-                <Badge color="success" variant="points" />
+              <Row>
+                <Badge
+                  size="xs"
+                  color="primary"
+                  css={{ mb: 5, mt: 2.5 }}
+                  isSquared
+                >{`${traceFlag.LogType}`}</Badge>
+              </Row>
+            </Col>
+            <Col>
+              <Row align="center">
+                <Text size="$sm" css={{ mr: 5 }}>
+                  {isFuture ? "Upcoming" : isExpired ? "Expired" : "Active"}
+                </Text>
+                {!isFuture && !isExpired && (
+                  <Badge color="success" variant="points" />
+                )}
+              </Row>
+              {!isExpired && !isFuture && (
+                <Progress
+                  size="xs"
+                  value={elapsedTimePercentage}
+                  color={utils.getProgressColor(elapsedTimePercentage)}
+                />
               )}
-            </Row>
-            {!isExpired && !isFuture && (
-              <Progress
-                size="xs"
-                value={elapsedTimePercentage}
-                color={utils.getProgressColor(elapsedTimePercentage)}
-              />
-            )}
-            <Text size="$xs">{`${relativeExpirationTime}`}</Text>
-          </Col>
-          <Row justify="flex-end">
-            <Col css={{ width: "auto" }}>
-              <Button size="xs" color="primary" flat css={{ mb: 10 }}>
-                Update
-              </Button>
+              <Text size="$xs">{`${relativeExpirationTime}`}</Text>
+            </Col>
+            <Row align="center" justify="flex-end">
               <Button
                 size="xs"
                 color="error"
                 flat
                 disabled={isMutationLoading}
-                onPress={() => deleteFlag()}
+                onPress={() => {
+                  deleteFlag();
+                  setIsCollapsibleOpen(false);
+                }}
+                css={{
+                  fontSize: "x-small",
+                  fontWeight: "$bold",
+                }}
               >
                 {isMutationLoading ? (
                   <Loading color="currentColor" size="xs" />
                 ) : (
-                  "Delete"
+                  "DELETE"
                 )}
               </Button>
-            </Col>
+            </Row>
           </Row>
-        </Row>
-      </Card.Body>
-    </Card>
+        </Card.Body>
+      </Card>
+    </CollapsingWrapper>
   );
 }
 

@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
+  Dropdown,
+  FormElement,
   Input,
   Loading,
   Modal,
   Row,
-  Spacer,
   Text,
 } from "@nextui-org/react";
 import { DateTime } from "luxon";
@@ -13,7 +14,7 @@ import { DateTime } from "luxon";
 import mainApi from "../../../mainApi";
 import soql, { type QueryTraceFlags } from "../../../shared/soql";
 import queryKeys from "../../../shared/queryKeys";
-import { type NewTraceFlag } from "./types";
+import type { NewTraceFlag } from "./types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SfdxErrorResponse } from "../../../shared/sfdxResponses";
 import useCreateDebugLevel from "./useCreateDebugLevel";
@@ -25,17 +26,13 @@ type AddTraceFlagModalProps = {
 
 const LOG_TYPE = "USER_DEBUG";
 
-function buildCreateTraceFlagRequest(
-  newTraceFlag: NewTraceFlag,
-  debugLevelId: string,
-  tracedEntityId: string
-) {
+function buildCreateTraceFlagRequest(newTraceFlag: NewTraceFlag) {
   return (
     `LogType=${LOG_TYPE} ` +
     `StartDate=${newTraceFlag.startTime.toISO()} ` +
     `ExpirationDate=${newTraceFlag.endTime.toISO()} ` +
-    `DebugLevelId=${debugLevelId} ` +
-    `TracedEntityId=${tracedEntityId} `
+    `DebugLevelId=${newTraceFlag.debugLevelId} ` +
+    `TracedEntityId=${newTraceFlag.tracedEntityId} `
   );
 }
 
@@ -51,6 +48,23 @@ function AddTraceFlagModal({
     debugLevelName,
   } = useCreateDebugLevel();
 
+  const [durationInMinutes, setDurationInMinutes] = useState(60);
+  const [newTraceFlag, setNewTraceFlag] = useState<NewTraceFlag>({
+    startTime: DateTime.now().plus({ minute: 1 }),
+    endTime: DateTime.now().plus({ hour: 1, minute: 1 }),
+    debugLevelId: debugLevelId || "",
+    tracedEntityId: "",
+    tracedEntityName: "Select Traced Entity",
+  });
+
+  useEffect(() => {
+    if (debugLevelId && debugLevelId !== newTraceFlag.debugLevelId)
+      setNewTraceFlag({
+        ...newTraceFlag,
+        debugLevelId,
+      });
+  }, [debugLevelId, newTraceFlag]);
+
   const {
     data: tracedEntities,
     isLoading,
@@ -58,16 +72,6 @@ function AddTraceFlagModal({
   } = useQuery([queryKeys.TRACED_ENTITIES], () =>
     mainApi.runSoql<QueryTraceFlags>(soql.QUERY_TRACE_FLAGS)
   );
-
-  const firstResult = tracedEntities?.result.records[0] ?? null;
-
-  const [durationInMinutes, setDurationInMinutes] = useState(60);
-  const [newTraceFlag, setNewTraceFlag] = useState<NewTraceFlag>({
-    startTime: DateTime.now().plus({ minute: 1 }),
-    endTime: DateTime.now().plus({ hour: 1, minute: 1 }),
-    debugLevelId: debugLevelId ?? "",
-    tracedEntityId: (firstResult && firstResult)?.TracedEntityId ?? "",
-  });
 
   const {
     mutate: createRecord,
@@ -99,6 +103,26 @@ function AddTraceFlagModal({
     );
   }
 
+  function handleOnStartDateChange(e: React.ChangeEvent<FormElement>) {
+    setNewTraceFlag({
+      ...newTraceFlag,
+      startTime: newTraceFlag.startTime.set({
+        year: DateTime.fromSQL(e.target.value).year,
+        month: DateTime.fromSQL(e.target.value).month,
+        day: DateTime.fromSQL(e.target.value).day,
+      }),
+    });
+  }
+  function handleOnStartTimeChange(e: React.ChangeEvent<FormElement>) {
+    setNewTraceFlag({
+      ...newTraceFlag,
+      startTime: newTraceFlag.startTime.set({
+        hour: DateTime.fromFormat(e.target.value, "HH:mm").hour,
+        minute: DateTime.fromFormat(e.target.value, "HH:mm").minute,
+      }),
+    });
+  }
+
   function handleRangeChange(rangeValue: string) {
     const rangeInMinutes = Math.round(Number(rangeValue) * (60 / 100));
     setDurationInMinutes(rangeInMinutes);
@@ -111,19 +135,26 @@ function AddTraceFlagModal({
     });
   }
 
-  function handleOnTracedEntitySelect(entityId: string) {
-    console.log("hiii: ", entityId);
+  function handleOnTracedEntitySelect(
+    tracedEntityId: string,
+    tracedEntityName: string
+  ) {
+    setNewTraceFlag({
+      ...newTraceFlag,
+      tracedEntityId,
+      tracedEntityName,
+    });
   }
 
+  const isValidNewTraceFlag =
+    Boolean(newTraceFlag.endTime) &&
+    Boolean(newTraceFlag.startTime) &&
+    Boolean(newTraceFlag.debugLevelId) &&
+    Boolean(newTraceFlag.tracedEntityId);
+
   function handleAddNewPress() {
-    if (newTraceFlag.endTime && newTraceFlag.startTime && tracedEntities) {
-      createRecord(
-        buildCreateTraceFlagRequest(
-          newTraceFlag,
-          debugLevelId ?? "",
-          tracedEntities.result.records[0].TracedEntityId
-        )
-      );
+    if (isValidNewTraceFlag) {
+      createRecord(buildCreateTraceFlagRequest(newTraceFlag));
     }
   }
 
@@ -156,54 +187,49 @@ function AddTraceFlagModal({
               value={debugLevelName}
               disabled
             />
-            <Spacer y={0.5} />
-            <Input
-              bordered
-              clearable
-              labelPlaceholder="Traced Entity Id"
-              color="secondary"
-              value={tracedEntities?.result.records[0].TracedEntityId}
-              type="submit"
-            >
-              <select
-                onChange={(e) => handleOnTracedEntitySelect(e.target.value)}
+            <Dropdown>
+              <Dropdown.Button flat color="primary" size="md">
+                {newTraceFlag.tracedEntityName}
+              </Dropdown.Button>
+              <Dropdown.Menu
+                aria-label="Traced Entity Selection"
+                color="primary"
+                disallowEmptySelection
+                selectionMode="single"
+                onSelectionChange={(e) => {
+                  for (const item of e) {
+                    const [tracedEntityId, tracedEntityName] = item
+                      .toString()
+                      .split("|");
+                    handleOnTracedEntitySelect(
+                      tracedEntityId,
+                      tracedEntityName
+                    );
+                  }
+                }}
               >
-                {tracedEntities.result.records.map((r, idx) => (
-                  <option value={r.TracedEntityId} key={`traced-entity-${idx}`}>
+                {tracedEntities.result.records.map((r) => (
+                  <Dropdown.Item
+                    key={`${r.TracedEntityId}|${r.TracedEntity.Name}`}
+                    description={r.TracedEntityId}
+                  >
                     {r.TracedEntity.Name}
-                  </option>
+                  </Dropdown.Item>
                 ))}
-              </select>
-            </Input>
+              </Dropdown.Menu>
+            </Dropdown>
             <Input
               label="Start Date"
               type="date"
               min={DateTime.now().toSQLDate()}
               value={newTraceFlag.startTime.toSQLDate()}
-              onChange={(e) =>
-                setNewTraceFlag({
-                  ...newTraceFlag,
-                  startTime: newTraceFlag.startTime.set({
-                    year: DateTime.fromSQL(e.target.value).year,
-                    month: DateTime.fromSQL(e.target.value).month,
-                    day: DateTime.fromSQL(e.target.value).day,
-                  }),
-                })
-              }
+              onChange={handleOnStartDateChange}
             />
             <Input
               label="Start Time"
               type="time"
               value={newTraceFlag.startTime.toFormat("HH:mm")}
-              onChange={(e) =>
-                setNewTraceFlag({
-                  ...newTraceFlag,
-                  startTime: newTraceFlag.startTime.set({
-                    hour: DateTime.fromFormat(e.target.value, "HH:mm").hour,
-                    minute: DateTime.fromFormat(e.target.value, "HH:mm").minute,
-                  }),
-                })
-              }
+              onChange={handleOnStartTimeChange}
             />
             <Input
               label="Duration"
@@ -223,6 +249,7 @@ function AddTraceFlagModal({
                 onPress={handleAddNewPress}
                 color="primary"
                 css={{ ml: 10 }}
+                disabled={!isValidNewTraceFlag}
               >
                 {isMutationLoading ? (
                   <Loading color="currentColor" size="sm" />

@@ -57,19 +57,24 @@ function TraceFlagList() {
               border: "0.5px solid grey",
             }}
           />
+        ) : data && data.result.records.length === 0 ? (
+          <Text size="small" css={{ m: 15 }}>
+            No trace flags...
+          </Text>
         ) : (
-          data?.result.records.map((f: TraceFlag) => (
+          data &&
+          data.result.records.map((f: TraceFlag) => (
             <TraceFlagItem traceFlag={f} key={f.Id} />
           ))
         )}
         <Button
-          css={{ ml: 10, mb: 10 }}
+          css={{ ml: 10, mb: 10, fontSize: "x-small", fontWeight: "$bold" }}
           auto
           onPress={() => setIsModalOpen(true)}
           color="success"
           size="xs"
         >
-          Create New Flag
+          CREATE NEW FLAG
         </Button>
       </Collapse>
     </>

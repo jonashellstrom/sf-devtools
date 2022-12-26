@@ -24,16 +24,15 @@ function FetchingButton({ isFetching, setIsFetching }: FetchingButtonProps) {
     <Button
       size="xs"
       auto
-      css={{ ml: 10, mb: 10 }}
+      css={{ ml: 10, mb: 10, fontSize: "x-small", fontWeight: "$bold" }}
       onPress={() => {
         setIsFetching(!isFetching);
         setFetchingCtaText(isFetching ? "Start Fetching ▶️" : "Fetching Now!");
       }}
-      // flat
       onMouseEnter={handleOnMouseEnter}
       onMouseLeave={handleOnMouseLeave}
     >
-      {fetchingCtaText}
+      {fetchingCtaText.toLocaleUpperCase()}
       {isShowingActiveBadge && (
         <Badge color="success" variant="points" css={{ ml: 5 }} />
       )}

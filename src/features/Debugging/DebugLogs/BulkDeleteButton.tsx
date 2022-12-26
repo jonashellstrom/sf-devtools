@@ -1,5 +1,6 @@
 import { Button, Loading } from "@nextui-org/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 import mainApi from "../../../mainApi";
 import queryKeys from "../../../shared/queryKeys";
@@ -18,19 +19,33 @@ function BulkDeleteButton({ isDisabled }: BulkDeleteButtonProps) {
       },
     });
 
+  const [hasPressedOnce, setHasPressedOnce] = useState(false);
+
+  const handleConfirmPress = () => {
+    setHasPressedOnce(true);
+    setTimeout(() => {
+      setHasPressedOnce(false);
+    }, 2000);
+  };
+
   return (
     <Button
       size="xs"
       auto
       color="error"
-      onPress={() => bulkDeleteLogs()}
+      css={{ fontSize: "x-small", fontWeight: "$bold" }}
+      onPress={() => {
+        hasPressedOnce ? bulkDeleteLogs() : handleConfirmPress();
+      }}
       flat
       disabled={isDisabled}
     >
       {isBulkDeleteLogsLoading ? (
         <Loading color="currentColor" size="xs" />
+      ) : hasPressedOnce ? (
+        "⚠️ CLICK TO CONFIRM!"
       ) : (
-        "Delete All Logs"
+        "DELETE ALL LOGS"
       )}
     </Button>
   );

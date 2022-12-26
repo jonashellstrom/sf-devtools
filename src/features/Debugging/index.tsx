@@ -5,7 +5,7 @@ import TraceFlagList from "./TraceFlags/TraceFlagList";
 
 function Debugging() {
   return (
-    <Container css={{ pt: 30 }}>
+    <Container css={{ pt: 20 }}>
       <TraceFlagList />
       <DebugLogs />
     </Container>
