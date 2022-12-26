@@ -63,7 +63,8 @@ function OrgDetailModal({
       value: scratchItem.orgId.substring(0, 15),
     },
   ];
-  const { handleOnPress, CopyToClipboardWrapper } = useWithCopyToClipboard();
+  const { handleOnCopyPress, CopyToClipboardWrapper } =
+    useWithCopyToClipboard();
 
   const displayName = scratchItem.alias ? scratchItem.alias : "Unaliased";
   return (
@@ -103,7 +104,7 @@ function OrgDetailModal({
                         // @ts-ignore
                         onPress={async () =>
                           // @ts-ignore
-                          await handleOnPress(item[columnKey])
+                          await handleOnCopyPress(item[columnKey])
                         }
                       >
                         {/* @ts-ignore */}

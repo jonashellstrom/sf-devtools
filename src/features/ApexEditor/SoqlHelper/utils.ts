@@ -1,9 +1,9 @@
+import { LOCAL_STORAGE_KEYS } from "../../../shared/constants";
+
 export type SoqlQueryOption = {
   sObject: string;
   plural: string;
 };
-
-export const LOCAL_STORAGE_KEY = "@sf-devtools-soql-helper-options";
 
 export const SOQL_QUERY_OPTIONS: SoqlQueryOption[] = [
   {
@@ -21,5 +21,8 @@ export const SOQL_QUERY_OPTIONS: SoqlQueryOption[] = [
 ];
 
 export function setOptionsInLocalStorage(options: readonly SoqlQueryOption[]) {
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(options));
+  localStorage.setItem(
+    LOCAL_STORAGE_KEYS.SOQL_OPTIONS,
+    JSON.stringify(options)
+  );
 }

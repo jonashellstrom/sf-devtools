@@ -3,15 +3,12 @@ import { Dropdown, Text, useModal } from "@nextui-org/react";
 
 import { DeleteIcon } from "../../../components/icons/DeleteIcon";
 import ApexBookmarkModal from "./ApexBookmarkModal";
-import {
-  type BookmarkedApex,
-  DEFAULT_BOOKMARKED_APEX,
-  BOOKMARKS_LOCAL_STORAGE_KEY,
-} from "./utils";
+import { type BookmarkedApex, DEFAULT_BOOKMARKED_APEX } from "./utils";
 import ApexBookmarkItem from "./ApexBookmarkItem";
+import { LOCAL_STORAGE_KEYS } from "../../../shared/constants";
 
 function getInitialBookmarks(): BookmarkedApex[] {
-  const localStore = localStorage.getItem(BOOKMARKS_LOCAL_STORAGE_KEY);
+  const localStore = localStorage.getItem(LOCAL_STORAGE_KEYS.BOOKMARKS);
   if (localStore) {
     return [...JSON.parse(localStore)];
   } else {

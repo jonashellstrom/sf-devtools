@@ -6,7 +6,7 @@ function useWithCopyToClipboard(hidePopoverAfter: number = 3000) {
   const copyToClipboard = useCopyToClipboard();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleOnPress = useCallback(
+  const handleOnCopyPress = useCallback(
     async (textToCopy: string) => {
       await copyToClipboard(textToCopy);
       setIsOpen(true);
@@ -30,7 +30,7 @@ function useWithCopyToClipboard(hidePopoverAfter: number = 3000) {
     );
   }, [isOpen]);
 
-  return { CopyToClipboardWrapper, handleOnPress };
+  return { CopyToClipboardWrapper, handleOnCopyPress };
 }
 
 export default useWithCopyToClipboard;

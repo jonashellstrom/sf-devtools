@@ -6,10 +6,10 @@ import { IconButton } from "../../Dashboard/ScratchView/IconButton";
 import AddSoqlOptionModal from "./AddSoqlOptionModal";
 import {
   type SoqlQueryOption,
-  LOCAL_STORAGE_KEY,
   SOQL_QUERY_OPTIONS,
   setOptionsInLocalStorage,
 } from "./utils";
+import { LOCAL_STORAGE_KEYS } from "../../../shared/constants";
 
 type SoqlHelperProps = {
   appendCode: (query: string) => void;
@@ -22,7 +22,7 @@ function makeDefaultQuery(opt: SoqlQueryOption) {
 }
 
 function getInitialOptions(): SoqlQueryOption[] {
-  const localStore = localStorage.getItem(LOCAL_STORAGE_KEY);
+  const localStore = localStorage.getItem(LOCAL_STORAGE_KEYS.SOQL_OPTIONS);
   if (localStore) {
     return [...JSON.parse(localStore)];
   } else {

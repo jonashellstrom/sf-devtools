@@ -3,13 +3,15 @@ import type {
   ListLimitsSuccessResponse,
   ListLogsResponse,
   ListOrgsSuccessResponse,
+  RunAnonymousSuccessResponse,
   SfdxErrorResponse,
+  SfdxResponse,
 } from "./shared/sfdxResponses";
 import sfdxResponses from "./shared/sfdxResponses";
 
 async function runAnonymous(apex: string) {
   const res = await window?.api?.sendApex("apexToMainWithOutput", apex);
-  return JSON.parse(res);
+  return JSON.parse(res) as RunAnonymousSuccessResponse;
 }
 
 async function runSoql<T>(soql: string) {
@@ -91,7 +93,15 @@ async function listOrgs() {
 }
 
 async function setAliasForOrg(username: string, alias: string) {
-  await window?.api?.setAliasForOrg("setAliasForOrg", username, alias);
+  const res = await window?.api?.setAliasForOrg(
+    "setAliasForOrg",
+    username,
+    alias
+  );
+
+  const setAliasForOrgRes = JSON.parse(res) as SfdxResponse;
+  if (setAliasForOrgRes.status === 0) return setAliasForOrgRes;
+  else throw new Error("Error setting new alias");
 }
 
 async function openOrg(username: string) {

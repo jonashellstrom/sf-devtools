@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
+import { useTheme } from "@nextui-org/react";
+
 import useDebouncedSaveToLocalStorage from "../../hooks/useDebouncedSaveToLocalStorage";
+import { LOCAL_STORAGE_KEYS } from "../../shared/constants";
 
 require("./editor-theme.css");
 
@@ -8,27 +11,39 @@ export enum Theme {
   NIGHT_OWL = "NIGHT_OWL",
 }
 
-const LOCAL_STORAGE_KEY = "@sf-devtools-editor-theme";
+const COLOR_MODE_ATTRIBUTE = "data-color-mode";
+const TEXT_EDITOR_CSS_CLASS_NAME = "w-tc-editor-preview";
+const THEME_CLASS_NAMES = {
+  GITHUB: "github-theme",
+  NIGHT_OWL: "night-owl-theme",
+};
 
 function getInitialTheme() {
-  return localStorage.getItem(LOCAL_STORAGE_KEY) || Theme.GITHUB;
+  return localStorage.getItem(LOCAL_STORAGE_KEYS.EDITOR_THEME) || Theme.GITHUB;
 }
+
 function useEditorTheme() {
   const [theme, setTheme] = useState(getInitialTheme);
+  const { isDark } = useTheme();
 
-  useDebouncedSaveToLocalStorage(LOCAL_STORAGE_KEY, theme, 0);
+  document.documentElement.setAttribute(
+    COLOR_MODE_ATTRIBUTE,
+    isDark ? "dark" : "light"
+  );
+
+  useDebouncedSaveToLocalStorage(LOCAL_STORAGE_KEYS.EDITOR_THEME, theme, 0);
 
   useEffect(() => {
     const editorElement = document.getElementsByClassName(
-      "w-tc-editor-preview"
+      TEXT_EDITOR_CSS_CLASS_NAME
     );
     for (const el of editorElement) {
       if (theme === Theme.GITHUB) {
-        el.classList.add("github-theme");
-        el.classList.remove("night-owl-theme");
+        el.classList.add(THEME_CLASS_NAMES.GITHUB);
+        el.classList.remove(THEME_CLASS_NAMES.NIGHT_OWL);
       } else {
-        el.classList.add("night-owl-theme");
-        el.classList.remove("github-theme");
+        el.classList.add(THEME_CLASS_NAMES.NIGHT_OWL);
+        el.classList.remove(THEME_CLASS_NAMES.GITHUB);
       }
     }
   }, [theme]);

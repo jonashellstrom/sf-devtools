@@ -1,10 +1,10 @@
-import { Loading, useTheme } from "@nextui-org/react";
+import { Loading } from "@nextui-org/react";
 import ReactCodeEditor, {
   TextareaCodeEditorProps,
 } from "@uiw/react-textarea-code-editor";
 
 type CodeEditorProps = {
-  code: string | undefined;
+  code: string;
   placeholder: string;
   language: TextareaCodeEditorProps["language"];
   setCode?: (code: string) => void;
@@ -29,9 +29,8 @@ function CodeEditor({
   isDisabled,
   minHeight = 270,
 }: CodeEditorProps) {
-  const { isDark } = useTheme();
-  if (isDark) document.documentElement.setAttribute("data-color-mode", "dark");
-  else document.documentElement.setAttribute("data-color-mode", "light");
+  const shouldUnsetLanguageParsingForPerformanceOptimization =
+    code.length > 8_000;
 
   return (
     <div
@@ -43,7 +42,11 @@ function CodeEditor({
     >
       <ReactCodeEditor
         value={code}
-        language={language}
+        language={
+          shouldUnsetLanguageParsingForPerformanceOptimization
+            ? undefined
+            : language
+        }
         placeholder={placeholder}
         onChange={setCode && ((e) => setCode(e.target.value))}
         disabled={isDisabled}
@@ -52,7 +55,7 @@ function CodeEditor({
         style={{
           background: undefined,
           whiteSpace: "normal",
-          fontSize: 14,
+          fontSize: 12,
           borderRadius: 10,
           fontFamily:
             "JetBrains Mono,ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace",

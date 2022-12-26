@@ -1,12 +1,12 @@
+import { LOCAL_STORAGE_KEYS } from "../../../shared/constants";
+
 export type BookmarkedApex = {
   name: string;
   code: string;
 };
 
-export const BOOKMARKS_LOCAL_STORAGE_KEY = "@sf-devtools-bookmarked-apex";
-
 export function setBookmarksInLocalStorage(options: readonly BookmarkedApex[]) {
-  localStorage.setItem(BOOKMARKS_LOCAL_STORAGE_KEY, JSON.stringify(options));
+  localStorage.setItem(LOCAL_STORAGE_KEYS.BOOKMARKS, JSON.stringify(options));
 }
 
 const STOP_ALL_CRON_JOBS = `

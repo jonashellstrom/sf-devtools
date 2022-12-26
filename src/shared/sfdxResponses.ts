@@ -22,6 +22,20 @@ export type SfdxErrorResponse = {
   commandName: string;
 };
 
+export type RunAnonymousResponse = {
+  success: boolean;
+  compiled: boolean;
+  compileProblem: string;
+  exceptionMessage: string;
+  exceptionStackTrace: string;
+  line: number;
+  column: number;
+  logs: string;
+};
+
+export type RunAnonymousSuccessResponse =
+  SfdxSuccessResponse<RunAnonymousResponse>;
+
 export type ListLogsResponse = {
   status: 0 | 1;
   result: Array<{
