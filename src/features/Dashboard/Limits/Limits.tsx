@@ -4,14 +4,18 @@ import mainApi from "../../../mainApi";
 import LimitItem from "./LimitItem";
 
 function Limits() {
-  // TODO: handle errors
   const { data, isLoading } = useQuery(["list-limits"], mainApi.listLimits);
 
   return (
     <>
       <Row>
         <Collapse
-          css={{ mt: -20, mb: 20, borderTop: "0px", width: "100%" }}
+          css={{
+            mb: -20,
+            borderTop: "0px",
+            borderBottom: "0px",
+            width: "100%",
+          }}
           title={
             <Text h5 b>
               Limits for Org
@@ -19,7 +23,7 @@ function Limits() {
           }
           subtitle={
             <Text size="$xs" css={{ opacity: 0.7 }}>
-              Expand to see your Org's Limits
+              Expand to see your org's limits
             </Text>
           }
         >

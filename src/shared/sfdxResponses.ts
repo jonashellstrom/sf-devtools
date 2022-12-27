@@ -2,6 +2,7 @@ type ISOTimestamp = string; // "2023-01-25T18:30:22.810Z"
 type UnixTimestamp = string; // "1671128872000"
 type SQLDate = string; // "2023-01-25"
 type DateAndTime = string; // 2023-01-25, 1:30:22 p.m.
+type EighteenCharOrgId = string;
 
 export type SfdxResponse = {
   status: 0 | 1;
@@ -21,6 +22,19 @@ export type SfdxErrorResponse = {
   warnings: [];
   commandName: string;
 };
+
+export type CurrentUserResponse = {
+  accessToken: string;
+  id: string;
+  instanceUrl: string;
+  loginUrl: string;
+  orgId: EighteenCharOrgId;
+  profileName: string;
+  username: string;
+  alias: string;
+};
+export type CurrentUserSuccessResponse =
+  SfdxSuccessResponse<CurrentUserResponse>;
 
 export type RunAnonymousResponse = {
   success: boolean;

@@ -1,53 +1,65 @@
-import { Col, Link, Loading, Row, Text } from "@nextui-org/react";
-import { useQuery } from "@tanstack/react-query";
+import { Card, Col, Loading, Row, Text } from "@nextui-org/react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import mainApi from "../../../mainApi";
+import Limits from "../Limits/Limits";
 
-// TODO: type result
 function CurrentUserDetails() {
   const { data, isLoading } = useQuery(["current-user"], mainApi.displayUser);
-
-  function makeScratchNickname() {
-    const parts = data?.result.instanceUrl.split("https://")[1].split("-");
-    if (parts && parts.length > 2) {
-      return `${parts[0].toLocaleUpperCase()} ${parts[1].toLocaleUpperCase()}`;
-    } else {
-      return "My Scratch";
-    }
-  }
+  const { mutate: openOrg, isLoading: isOpenOrgLoading } = useMutation(
+    (username: string) => mainApi.openOrg(username)
+  );
 
   return (
-    <Col css={{ mb: 20 }}>
-      <Row align="center">
-        <Text h5 b>
-          Current SFDX Project Org
-        </Text>
-      </Row>
-      <Row>
-        {isLoading ? (
-          <Loading color="primary" textColor="primary" type="points" size="xs">
-            <Text size="small" css={{ pt: 5 }}>
-              Getting default org...
-            </Text>
-          </Loading>
-        ) : (
-          <Col>
-            <Text
-              b
-              size="medium"
-            >{`Your current org is set as ${data?.result.alias}`}</Text>
-            <Text size="small">{data?.result.username}</Text>
-            <Text size="small">{data?.result.orgId}</Text>
-            <Text size="small">
-              <Link href={data?.result.instanceUrl}>
-                {data?.result.instanceUrl}
-              </Link>
-            </Text>
-            <Text size="small">{makeScratchNickname()}</Text>
-          </Col>
-        )}
-      </Row>
-    </Col>
+    <Card variant="bordered" css={{ mb: 15 }}>
+      <Card.Body>
+        <Row align="center">
+          <Text h5 b>
+            Current Org
+          </Text>
+        </Row>
+        <Row>
+          {isLoading ? (
+            <Loading
+              color="primary"
+              textColor="primary"
+              type="points"
+              size="xs"
+            >
+              <Text size="$sm" css={{ pt: 5 }}>
+                Getting default org...
+              </Text>
+            </Loading>
+          ) : (
+            <Col>
+              <Text
+                b
+                size="$sm"
+              >{`Your default sfdx org is set as ${data?.result.alias} (${data?.result.orgId})`}</Text>
+              <Text size="$sm">{data?.result.username}</Text>
+              <Row>
+                <Text
+                  size="$sm"
+                  onClick={() => data && openOrg(data.result.username)}
+                  css={{
+                    cursor: "pointer",
+                    color: "$success",
+                    "&:hover": {
+                      fontWeight: "$semibold",
+                    },
+                  }}
+                >
+                  {isOpenOrgLoading
+                    ? "Opening org in browser..."
+                    : data?.result.instanceUrl}
+                </Text>
+              </Row>
+            </Col>
+          )}
+        </Row>
+        <Limits />
+      </Card.Body>
+    </Card>
   );
 }
 

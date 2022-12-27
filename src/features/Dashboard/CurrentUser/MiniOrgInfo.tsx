@@ -7,13 +7,20 @@ function MiniOrgInfo() {
   const { data, isLoading } = useQuery(["current-user"], mainApi.displayUser);
 
   return (
-    <Row css={{ mt: 5 }}>
+    <Row css={{ minWidth: "120px" }}>
       {isLoading ? (
-        <Loading color="primary" textColor="primary" type="points" size="xs">
-          <Text size="small" css={{ pt: 5 }}>
-            Getting current org...
+        <Col>
+          <Loading
+            color="primary"
+            textColor="primary"
+            type="points"
+            size="xs"
+            css={{ mb: 7 }}
+          />
+          <Text size="x-small" css={{ mb: 5 }}>
+            Getting default org...
           </Text>
-        </Loading>
+        </Col>
       ) : (
         <Col>
           <Text
