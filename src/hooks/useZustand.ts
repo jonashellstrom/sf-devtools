@@ -4,6 +4,7 @@ import { devtools } from "zustand/middleware";
 import { LOCAL_STORAGE_KEYS } from "../shared/constants";
 
 type AppState = {
+  sfdxPath: string;
   code: string;
   output: string;
   isEditorExpanded: boolean;
@@ -12,6 +13,7 @@ type AppState = {
 };
 
 type AppStateWithActions = AppState & {
+  setSfdxPath: (path: string) => void;
   getCode: () => string;
   setCode: (code: string) => void;
   setOutput: (output: string) => void;
@@ -22,6 +24,8 @@ type AppStateWithActions = AppState & {
 
 const PLACEHOLDER_APEX = `final String greeting = 'Hello world!';\nSystem.debug(greeting);`;
 
+const getInitialSfdxPath = () =>
+  localStorage.getItem(LOCAL_STORAGE_KEYS.SFDX_PATH) || "";
 const getInitialCode = () =>
   localStorage.getItem(LOCAL_STORAGE_KEYS.CODE) || PLACEHOLDER_APEX;
 const getInitialOutput = () =>
@@ -34,6 +38,7 @@ const getInitialIsOutputRaw = () =>
   false;
 
 const initialStore: AppState = {
+  sfdxPath: getInitialSfdxPath(),
   code: getInitialCode(),
   output: getInitialOutput(),
   isEditorExpanded: getInitialIsEditorExpanded(),
@@ -44,6 +49,11 @@ const initialStore: AppState = {
 export const useZustand = create<AppStateWithActions>()(
   devtools((set, get) => ({
     ...initialStore,
+    setSfdxPath(sfdxPath) {
+      set(() => ({
+        sfdxPath,
+      }));
+    },
     getCode() {
       const { code } = get();
       return code;

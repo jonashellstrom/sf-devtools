@@ -42,7 +42,6 @@ function useCreateDebugLevel() {
       ),
     {
       onSuccess(data) {
-        console.log("created new debug level! data: ", data);
         setDebugLevelId(data.result.id);
       },
     }

@@ -1,4 +1,6 @@
+import { useZustand } from "./hooks/useZustand";
 import type {
+  CurrentUserSuccessResponse,
   GetLogResponse,
   ListLimitsSuccessResponse,
   ListLogsResponse,
@@ -9,13 +11,20 @@ import type {
 } from "./shared/sfdxResponses";
 import sfdxResponses from "./shared/sfdxResponses";
 
+const sfdxPath = useZustand.getState().sfdxPath;
+
+async function selectFolder() {
+  const res = await window?.api?.selectFolder("dialog:openDirectory");
+  return res;
+}
+
 async function runAnonymous(apex: string) {
-  const res = await window?.api?.sendApex("apexToMainWithOutput", apex);
+  const res = await window?.api?.runAnonymous("runAnonymous", sfdxPath, apex);
   return JSON.parse(res) as RunAnonymousSuccessResponse;
 }
 
 async function runSoql<T>(soql: string) {
-  const res = await window?.api?.sendSoql("soqlToMainWithOutput", soql);
+  const res = await window?.api?.runSoql("runSoql", sfdxPath, soql);
   return JSON.parse(res) as T;
 }
 
@@ -25,7 +34,8 @@ async function createRecord<T>(
   useToolingApi: boolean
 ) {
   const res = await window?.api?.createRecord(
-    "recordCreateToMainWithOutput",
+    "createRecord",
+    sfdxPath,
     sObjectType,
     values,
     useToolingApi
@@ -44,7 +54,8 @@ async function deleteRecord(
   useToolingApi: boolean
 ) {
   const res = await window?.api?.deleteRecord(
-    "recordDeleteToMainWithOutput",
+    "deleteRecord",
+    sfdxPath,
     sObjectType,
     id,
     useToolingApi
@@ -53,7 +64,7 @@ async function deleteRecord(
 }
 
 async function listLogs() {
-  const res = await window?.api?.listLogs("listLogsToMainWithOutput");
+  const res = await window?.api?.listLogs("listLogs", sfdxPath);
   const logsResponse = JSON.parse(res) as ListLogsResponse;
 
   return {
@@ -63,31 +74,31 @@ async function listLogs() {
 }
 
 async function getLog(logId: string, logData: ListLogsResponse["result"][0]) {
-  const res = await window?.api?.getLog("getLogToMainWithOutput", logId);
+  const res = await window?.api?.getLog("getLog", sfdxPath, logId);
   const parsedRes = JSON.parse(res);
   return { ...parsedRes, logData } as GetLogResponse;
 }
 
 async function bulkDeleteLogs() {
-  await window?.api?.bulkDeleteLogs("bulkDeleteApexLogs");
+  await window?.api?.bulkDeleteLogs("bulkDeleteLogs", sfdxPath);
 }
 
 async function displayUser() {
-  const res = await window?.api?.fetchCurrentUser("fetchCurrentUser");
-  return JSON.parse(res);
+  const res = await window?.api?.fetchCurrentUser("fetchCurrentUser", sfdxPath);
+  return JSON.parse(res) as CurrentUserSuccessResponse;
 }
 
 async function setDefaultOrg(username: string) {
-  await window?.api?.setDefaultOrg("setDefaultOrg", username);
+  await window?.api?.setDefaultOrg("setDefaultOrg", sfdxPath, username);
 }
 
 async function listLimits() {
-  const res = await window?.api?.listLimits("listLimits");
+  const res = await window?.api?.listLimits("listLimits", sfdxPath);
   return JSON.parse(res) as ListLimitsSuccessResponse;
 }
 
 async function listOrgs() {
-  const res = await window?.api?.listOrgs("listOrgs");
+  const res = await window?.api?.listOrgs("listOrgs", sfdxPath);
   const listOrgsRes = JSON.parse(res);
   return listOrgsRes as ListOrgsSuccessResponse;
 }
@@ -95,6 +106,7 @@ async function listOrgs() {
 async function setAliasForOrg(username: string, alias: string) {
   const res = await window?.api?.setAliasForOrg(
     "setAliasForOrg",
+    sfdxPath,
     username,
     alias
   );
@@ -105,14 +117,19 @@ async function setAliasForOrg(username: string, alias: string) {
 }
 
 async function openOrg(username: string) {
-  await window?.api?.openOrg("openOrg", username);
+  await window?.api?.openOrg("openOrg", sfdxPath, username);
 }
 
 async function markScratchForDeletion(username: string) {
-  await window?.api?.markScratchForDeletion("markScratchForDeletion", username);
+  await window?.api?.markScratchForDeletion(
+    "markScratchForDeletion",
+    sfdxPath,
+    username
+  );
 }
 
 const mainApi = {
+  selectFolder,
   runAnonymous,
   runSoql,
   createRecord,

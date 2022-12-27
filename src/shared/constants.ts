@@ -1,4 +1,5 @@
 export const LOCAL_STORAGE_KEYS = {
+  SFDX_PATH: "@sf-devtools-sfdx-path",
   CODE: "@sf-devtools-editor-code",
   CODE_OUTPUT: "@sf-devtools-editor-output",
   EDITOR_THEME: "@sf-devtools-editor-theme",

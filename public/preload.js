@@ -3,39 +3,33 @@ const { contextBridge, ipcRenderer } = require("electron");
 // Expose protected methods that allow the renderer process to use
 // the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld("api", {
-  send: (channel, data) => {
-    // whitelist channels
-    let validChannels = ["toMain"];
+  selectFolder: () => ipcRenderer.invoke("dialog:openDirectory"),
+  runAnonymous: async (channel, sfdxPath, apex) => {
+    let validChannels = ["runAnonymous"];
     if (validChannels.includes(channel)) {
-      ipcRenderer.send(channel, data);
-    }
-  },
-  receive: (channel, func) => {
-    let validChannels = ["fromMain"];
-    if (validChannels.includes(channel)) {
-      // Deliberately strip event as it includes `sender`
-      ipcRenderer.on(channel, (event, ...args) => func(...args));
-    }
-  },
-  sendApex: async (channel, apex) => {
-    let validChannels = ["apexToMainWithOutput"];
-    if (validChannels.includes(channel)) {
-      const result = await ipcRenderer.invoke(channel, apex); // needs to listen with ipcMain.handle
+      const result = await ipcRenderer.invoke(channel, sfdxPath, apex); // needs to listen with ipcMain.handle
       return result;
     }
   },
-  sendSoql: async (channel, soql) => {
-    let validChannels = ["soqlToMainWithOutput"];
+  runSoql: async (channel, sfdxPath, soql) => {
+    let validChannels = ["runSoql"];
     if (validChannels.includes(channel)) {
-      const result = await ipcRenderer.invoke(channel, soql);
+      const result = await ipcRenderer.invoke(channel, sfdxPath, soql);
       return result;
     }
   },
-  createRecord: async (channel, sObjectType, values, useToolingApi) => {
-    let validChannels = ["recordCreateToMainWithOutput"];
+  createRecord: async (
+    channel,
+    sfdxPath,
+    sObjectType,
+    values,
+    useToolingApi
+  ) => {
+    let validChannels = ["createRecord"];
     if (validChannels.includes(channel)) {
       const result = await ipcRenderer.invoke(
         channel,
+        sfdxPath,
         sObjectType,
         values,
         useToolingApi
@@ -43,11 +37,12 @@ contextBridge.exposeInMainWorld("api", {
       return result;
     }
   },
-  deleteRecord: async (channel, sObjectType, id, useToolingApi) => {
-    let validChannels = ["recordDeleteToMainWithOutput"];
+  deleteRecord: async (channel, sfdxPath, sObjectType, id, useToolingApi) => {
+    let validChannels = ["deleteRecord"];
     if (validChannels.includes(channel)) {
       const result = await ipcRenderer.invoke(
         channel,
+        sfdxPath,
         sObjectType,
         id,
         useToolingApi
@@ -55,73 +50,78 @@ contextBridge.exposeInMainWorld("api", {
       return result;
     }
   },
-  listLogs: async (channel) => {
-    let validChannels = ["listLogsToMainWithOutput"];
+  listLogs: async (channel, sfdxPath) => {
+    let validChannels = ["listLogs"];
     if (validChannels.includes(channel)) {
-      const result = await ipcRenderer.invoke(channel);
+      const result = await ipcRenderer.invoke(channel, sfdxPath);
       return result;
     }
   },
-  getLog: async (channel, logId) => {
-    let validChannels = ["getLogToMainWithOutput"];
+  getLog: async (channel, sfdxPath, logId) => {
+    let validChannels = ["getLog"];
     if (validChannels.includes(channel)) {
-      const result = await ipcRenderer.invoke(channel, logId);
+      const result = await ipcRenderer.invoke(channel, sfdxPath, logId);
       return result;
     }
   },
-  bulkDeleteLogs: async (channel) => {
-    let validChannels = ["bulkDeleteApexLogs"];
+  bulkDeleteLogs: async (channel, sfdxPath) => {
+    let validChannels = ["bulkDeleteLogs"];
     if (validChannels.includes(channel)) {
-      const result = await ipcRenderer.invoke(channel);
+      const result = await ipcRenderer.invoke(channel, sfdxPath);
       return result;
     }
   },
-  fetchCurrentUser: async (channel) => {
+  fetchCurrentUser: async (channel, sfdxPath) => {
     let validChannels = ["fetchCurrentUser"];
     if (validChannels.includes(channel)) {
-      const result = await ipcRenderer.invoke(channel);
+      const result = await ipcRenderer.invoke(channel, sfdxPath);
       return result;
     }
   },
-  setDefaultOrg: async (channel, username) => {
+  setDefaultOrg: async (channel, sfdxPath, username) => {
     let validChannels = ["setDefaultOrg"];
     if (validChannels.includes(channel)) {
-      const result = await ipcRenderer.invoke(channel, username);
+      const result = await ipcRenderer.invoke(channel, sfdxPath, username);
       return result;
     }
   },
-  listLimits: async (channel) => {
+  listLimits: async (channel, sfdxPath) => {
     let validChannels = ["listLimits"];
     if (validChannels.includes(channel)) {
-      const result = await ipcRenderer.invoke(channel);
+      const result = await ipcRenderer.invoke(channel, sfdxPath);
       return result;
     }
   },
-  listOrgs: async (channel) => {
+  listOrgs: async (channel, sfdxPath) => {
     let validChannels = ["listOrgs"];
     if (validChannels.includes(channel)) {
-      const result = await ipcRenderer.invoke(channel);
+      const result = await ipcRenderer.invoke(channel, sfdxPath);
       return result;
     }
   },
-  setAliasForOrg: async (channel, username, alias) => {
+  setAliasForOrg: async (channel, sfdxPath, username, alias) => {
     let validChannels = ["setAliasForOrg"];
     if (validChannels.includes(channel)) {
-      const result = await ipcRenderer.invoke(channel, username, alias);
+      const result = await ipcRenderer.invoke(
+        channel,
+        sfdxPath,
+        username,
+        alias
+      );
       return result;
     }
   },
-  openOrg: async (channel, username) => {
+  openOrg: async (channel, sfdxPath, username) => {
     let validChannels = ["openOrg"];
     if (validChannels.includes(channel)) {
-      const result = await ipcRenderer.invoke(channel, username);
+      const result = await ipcRenderer.invoke(channel, sfdxPath, username);
       return result;
     }
   },
-  markScratchForDeletion: async (channel, username) => {
+  markScratchForDeletion: async (channel, sfdxPath, username) => {
     let validChannels = ["markScratchForDeletion"];
     if (validChannels.includes(channel)) {
-      const result = await ipcRenderer.invoke(channel, username);
+      const result = await ipcRenderer.invoke(channel, sfdxPath, username);
       return result;
     }
   },

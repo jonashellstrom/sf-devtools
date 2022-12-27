@@ -1,17 +1,8 @@
-import {
-  Col,
-  Navbar as NUINavbar,
-  Row,
-  Switch,
-  Text,
-  useTheme,
-} from "@nextui-org/react";
-import { useTheme as useNextTheme } from "next-themes";
+import { Navbar as NUINavbar, Row, Text } from "@nextui-org/react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { MoonIcon } from "../../components/icons/MoonIcon";
-import { SunIcon } from "../../components/icons/SunIcon";
 
 import MiniOrgInfo from "../Dashboard/CurrentUser/MiniOrgInfo";
+import NavbarActions from "./NavbarActions";
 
 export const ROUTES = {
   root: "/",
@@ -20,8 +11,6 @@ export const ROUTES = {
 } as const;
 
 function Navbar() {
-  const { isDark } = useTheme();
-  const { setTheme } = useNextTheme();
   const navigate = useNavigate();
   const currentPath = useLocation().pathname;
 
@@ -63,28 +52,9 @@ function Navbar() {
         </NUINavbar.Link>
       </NUINavbar.Content>
       <NUINavbar.Content css={{ width: "180px", justifyContent: "flex-end" }}>
-        <Row>
+        <Row align="center">
           <MiniOrgInfo />
-          <Col
-            css={{
-              width: "auto",
-            }}
-          >
-            <Switch
-              checked={!isDark}
-              onChange={(e) => setTheme(e.target.checked ? "light" : "dark")}
-              bordered
-              size="sm"
-              color="success"
-              iconOn={<SunIcon />}
-              iconOff={<MoonIcon />}
-            />
-            <Row justify="center" css={{ mt: 5 }}>
-              <Text size="xx-small" b>
-                {isDark ? "DARK" : "LIGHT"}
-              </Text>
-            </Row>
-          </Col>
+          <NavbarActions />
         </Row>
       </NUINavbar.Content>
     </NUINavbar>

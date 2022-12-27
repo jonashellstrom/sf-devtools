@@ -1,6 +1,5 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog, protocol } = require("electron");
 const path = require("path");
-const fs = require("fs");
 const { exec: childProcessExec } = require("child_process");
 
 const CLI_JSON_SANITIZING_PATTERN =
@@ -9,8 +8,6 @@ const CLI_JSON_SANITIZING_PATTERN =
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
-let homePath;
-const SF_PROJECT_PATH = "path/to/sfproject";
 
 async function createWindow() {
   win = new BrowserWindow({
@@ -48,7 +45,7 @@ function setupLocalFilesNormalizerProxy() {
     protocol.registerHttpProtocol(
       "file",
       (request, callback) => {
-        const url = request.url.substr(8);
+        const url = request.url.substring(8);
         callback({ path: path.normalize(`${__dirname}/${url}`) });
       },
       (error) => {
@@ -66,7 +63,6 @@ function setupLocalFilesNormalizerProxy() {
 app.whenReady().then(() => {
   createWindow();
   setupLocalFilesNormalizerProxy();
-  homePath = app.getPath("home");
 
   app.on("activate", function () {
     // On macOS it's common to re-create a window in the app when the
@@ -79,7 +75,7 @@ app.whenReady().then(() => {
 
 // Quit when all windows are closed, except on macOS.
 // There, it's common for applications and their menu bar to stay active until
-// the user quits  explicitly with Cmd + Q.
+// the user quits explicitly with Cmd + Q.
 app.on("window-all-closed", function () {
   if (process.platform !== "darwin") {
     app.quit();
@@ -113,32 +109,34 @@ function exec(command) {
   });
 }
 
-ipcMain.on("toMain", (event, args) => {
-  fs.readFile("path/to/file", (error, data) => {
-    // Send result back to renderer process
-    win.webContents.send("fromMain", { test: "hello" });
+ipcMain.handle("dialog:openDirectory", async () => {
+  const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+    properties: ["openDirectory"],
   });
+  if (canceled) {
+    return;
+  } else {
+    return filePaths[0];
+  }
 });
 
-ipcMain.handle("apexToMainWithOutput", async (event, apex) => {
+ipcMain.handle("runAnonymous", async (_event, sfdxPath, apex) => {
   try {
-    await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && echo "${apex}" > sfdevtoolstemp.apex`
-    );
+    await exec(`cd ${sfdxPath} && echo "${apex}" > sfdevtoolstemp.apex`);
     const cliJsonOutput = await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:apex:execute -f sfdevtoolstemp.apex --json && rm sfdevtoolstemp.apex`
+      `cd ${sfdxPath} && sfdx force:apex:execute -f sfdevtoolstemp.apex --json && rm sfdevtoolstemp.apex`
     );
     return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {
+    await exec(`cd ${sfdxPath} && rm sfdevtoolstemp.apex`);
     return "An error occured";
   }
 });
 
-ipcMain.handle("soqlToMainWithOutput", async (event, soql) => {
+ipcMain.handle("runSoql", async (_event, sfdxPath, soql) => {
   try {
-    // TODO: make tooling api an input
     const cliJsonOutput = await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:data:soql:query -q "${soql}" --usetoolingapi --json`
+      `cd ${sfdxPath} && sfdx force:data:soql:query -q "${soql}" --usetoolingapi --json`
     );
     return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {
@@ -147,11 +145,11 @@ ipcMain.handle("soqlToMainWithOutput", async (event, soql) => {
 });
 
 ipcMain.handle(
-  "recordCreateToMainWithOutput",
-  async (event, sObjectType, values, useToolingApi) => {
+  "createRecord",
+  async (_event, sfdxPath, sObjectType, values, useToolingApi) => {
     try {
       const cliJsonOutput = await exec(
-        `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:data:record:create --sobjecttype ${sObjectType} -v "${values}" ${
+        `cd ${sfdxPath} && sfdx force:data:record:create --sobjecttype ${sObjectType} -v "${values}" ${
           useToolingApi ? "--usetoolingapi" : ""
         } --json`
       );
@@ -163,11 +161,11 @@ ipcMain.handle(
 );
 
 ipcMain.handle(
-  "recordDeleteToMainWithOutput",
-  async (event, sObjectType, id, useToolingApi) => {
+  "deleteRecord",
+  async (_event, sfdxPath, sObjectType, id, useToolingApi) => {
     try {
       const cliJsonOutput = await exec(
-        `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:data:record:delete --sobjecttype ${sObjectType} -i ${id} ${
+        `cd ${sfdxPath} && sfdx force:data:record:delete --sobjecttype ${sObjectType} -i ${id} ${
           useToolingApi ? "--usetoolingapi" : ""
         } --json`
       );
@@ -178,10 +176,10 @@ ipcMain.handle(
   }
 );
 
-ipcMain.handle("listLogsToMainWithOutput", async (event) => {
+ipcMain.handle("listLogs", async (_event, sfdxPath) => {
   try {
     const cliJsonOutput = await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:apex:log:list --json`
+      `cd ${sfdxPath} && sfdx force:apex:log:list --json`
     );
     return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {
@@ -189,10 +187,10 @@ ipcMain.handle("listLogsToMainWithOutput", async (event) => {
   }
 });
 
-ipcMain.handle("getLogToMainWithOutput", async (event, logId) => {
+ipcMain.handle("getLog", async (_event, sfdxPath, logId) => {
   try {
     const cliJsonOutput = await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:apex:log:get -i ${logId} --json`
+      `cd ${sfdxPath} && sfdx force:apex:log:get -i ${logId} --json`
     );
     return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {
@@ -201,34 +199,23 @@ ipcMain.handle("getLogToMainWithOutput", async (event, logId) => {
   }
 });
 
-ipcMain.handle("bulkDeleteApexLogs", async (event) => {
+ipcMain.handle("bulkDeleteLogs", async (_event, sfdxPath) => {
   try {
     await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:data:soql:query -t -q "SELECT Id FROM ApexLog" -r "csv" > apex-logs-to-delete.csv`
+      `cd ${sfdxPath} && sfdx force:data:soql:query -t -q "SELECT Id FROM ApexLog" -r "csv" > apex-logs-to-delete.csv`
     );
     await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:data:bulk:delete -s ApexLog -f apex-logs-to-delete.csv && rm apex-logs-to-delete.csv`
+      `cd ${sfdxPath} && sfdx force:data:bulk:delete -s ApexLog -f apex-logs-to-delete.csv && rm apex-logs-to-delete.csv`
     );
   } catch (_error) {
     return "An error occured";
   }
 });
 
-ipcMain.handle("fetchCurrentUser", async (event) => {
+ipcMain.handle("fetchCurrentUser", async (_event, sfdxPath) => {
   try {
     const cliJsonOutput = await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:user:display --json`
-    );
-    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
-  } catch (_error) {
-    return "An error occured";
-  }
-});
-
-ipcMain.handle("setDefaultOrg", async (event, username) => {
-  try {
-    const cliJsonOutput = await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:config:set defaultusername=${username} --json`
+      `cd ${sfdxPath} && sfdx force:user:display --json`
     );
     return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {
@@ -236,10 +223,10 @@ ipcMain.handle("setDefaultOrg", async (event, username) => {
   }
 });
 
-ipcMain.handle("listOrgs", async (event) => {
+ipcMain.handle("setDefaultOrg", async (_event, sfdxPath, username) => {
   try {
     const cliJsonOutput = await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:org:list --verbose --json`
+      `cd ${sfdxPath} && sfdx force:config:set defaultusername=${username} --json`
     );
     return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {
@@ -247,10 +234,10 @@ ipcMain.handle("listOrgs", async (event) => {
   }
 });
 
-ipcMain.handle("listLimits", async (event) => {
+ipcMain.handle("listOrgs", async (_event, sfdxPath) => {
   try {
     const cliJsonOutput = await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:limits:api:display --json`
+      `cd ${sfdxPath} && sfdx force:org:list --verbose --json`
     );
     return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {
@@ -258,10 +245,10 @@ ipcMain.handle("listLimits", async (event) => {
   }
 });
 
-ipcMain.handle("setAliasForOrg", async (event, username, alias) => {
+ipcMain.handle("listLimits", async (_event, sfdxPath) => {
   try {
     const cliJsonOutput = await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx alias:set ${alias}=${username} --json`
+      `cd ${sfdxPath} && sfdx force:limits:api:display --json`
     );
     return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {
@@ -269,10 +256,10 @@ ipcMain.handle("setAliasForOrg", async (event, username, alias) => {
   }
 });
 
-ipcMain.handle("openOrg", async (event, username) => {
+ipcMain.handle("setAliasForOrg", async (_event, sfdxPath, username, alias) => {
   try {
     const cliJsonOutput = await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:org:open -u ${username}`
+      `cd ${sfdxPath} && sfdx alias:set ${alias}=${username} --json`
     );
     return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {
@@ -280,10 +267,21 @@ ipcMain.handle("openOrg", async (event, username) => {
   }
 });
 
-ipcMain.handle("markScratchForDeletion", async (event, username) => {
+ipcMain.handle("openOrg", async (_event, sfdxPath, username) => {
   try {
     const cliJsonOutput = await exec(
-      `cd ${homePath}/${SF_PROJECT_PATH} && sfdx force:org:delete -u ${username} --json --noprompt`
+      `cd ${sfdxPath} && sfdx force:org:open -u ${username}`
+    );
+    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+  } catch (_error) {
+    return "An error occured";
+  }
+});
+
+ipcMain.handle("markScratchForDeletion", async (_event, sfdxPath, username) => {
+  try {
+    const cliJsonOutput = await exec(
+      `cd ${sfdxPath} && sfdx force:org:delete -u ${username} --json --noprompt`
     );
     return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {
