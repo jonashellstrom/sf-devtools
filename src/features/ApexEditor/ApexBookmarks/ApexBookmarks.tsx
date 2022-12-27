@@ -40,7 +40,7 @@ function ApexBookmarks() {
         >
           BOOKMARKED APEX
         </Dropdown.Button>
-        <Dropdown.Menu aria-label="Static Actions" css={{ width: "300px" }}>
+        <Dropdown.Menu aria-label="Static Actions" css={{ minWidth: "350px" }}>
           {[
             ...bookmarks.map((b) => (
               <Dropdown.Item key={b.name} textValue={b.name}>

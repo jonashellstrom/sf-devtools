@@ -16,19 +16,14 @@ import { DeleteIcon } from "../DeleteIcon";
 import type { ListOrgsSuccessResponse } from "../../../../../shared/sfdxResponses";
 import { useState } from "react";
 
-type ScratchOrg = ListOrgsSuccessResponse["result"]["scratchOrgs"][number];
+type NonScratchOrg =
+  ListOrgsSuccessResponse["result"]["nonScratchOrgs"][number];
 
-type ScratchActionMenuProps = {
-  scratchOrg: ScratchOrg;
-  setVisibleDetailsModal: (open: boolean) => void;
+type NonScratchActionMenuProps = {
+  org: NonScratchOrg;
 };
 
-export const CONFIRM_DELETE_TEXT = "⚠️ Click again to confirm!";
-
-function ScratchActionMenu({
-  scratchOrg,
-  setVisibleDetailsModal,
-}: ScratchActionMenuProps) {
+function NonScratchActionMenu({ org }: NonScratchActionMenuProps) {
   const queryClient = useQueryClient();
 
   const { mutate: openOrg, isLoading: isOpenOrgLoading } = useMutation(
@@ -40,7 +35,7 @@ function ScratchActionMenu({
     isLoading: isSetAliasForOrgLoading,
     isError,
   } = useMutation(
-    (alias: string) => mainApi.setAliasForOrg(scratchOrg.username, alias),
+    (alias: string) => mainApi.setAliasForOrg(org.username, alias),
     {
       onSuccess() {
         queryClient.invalidateQueries({
@@ -50,35 +45,6 @@ function ScratchActionMenu({
       },
     }
   );
-  const { mutate: markScratchForDeletion, isLoading: isDeleteOrgLoading } =
-    useMutation(
-      (username: string) => mainApi.markScratchForDeletion(username),
-      {
-        onSuccess() {
-          queryClient.invalidateQueries({
-            queryKey: ["list-orgs"],
-          });
-        },
-      }
-    );
-
-  const [hasPressedOnce, setHasPressedOnce] = useState(false);
-  const handleConfirmPress = () => {
-    setHasPressedOnce(true);
-    setTimeout(() => {
-      setHasPressedOnce(false);
-    }, 2000);
-  };
-
-  function handleOnDeletePress() {
-    hasPressedOnce
-      ? markScratchForDeletion(scratchOrg.orgId)
-      : handleConfirmPress();
-  }
-
-  function getDeleteButtonText() {
-    return hasPressedOnce ? CONFIRM_DELETE_TEXT : "Delete";
-  }
 
   const { setVisible, bindings } = useModal();
   const [newAlias, setNewAlias] = useState("");
@@ -100,10 +66,10 @@ function ScratchActionMenu({
         <Modal.Header>
           <Col>
             <Text size="$md" b>
-              {`Set an alias for org ${scratchOrg.orgId}`}
+              {`Set an alias for org ${org.orgId}`}
             </Text>
-            {!!scratchOrg.alias && (
-              <Text size="$sm">{`Current alias: ${scratchOrg.alias}`}</Text>
+            {!!org.alias && (
+              <Text size="$sm">{`Current alias: ${org.alias}`}</Text>
             )}
           </Col>
         </Modal.Header>
@@ -151,20 +117,6 @@ function ScratchActionMenu({
           </Dropdown.Button>
           <Dropdown.Menu color="primary" aria-label="Actions">
             <Dropdown.Item
-              key="details"
-              icon={
-                <DeleteIcon size={22} fill="var(--nextui-colors-primary)" />
-              }
-            >
-              <Text
-                onClick={() => {
-                  setVisibleDetailsModal(true);
-                }}
-              >
-                See details
-              </Text>
-            </Dropdown.Item>
-            <Dropdown.Item
               key="open"
               icon={
                 isOpenOrgLoading ? (
@@ -174,10 +126,7 @@ function ScratchActionMenu({
                 )
               }
             >
-              <Text
-                color="currentColor"
-                onClick={() => openOrg(scratchOrg.username)}
-              >
+              <Text color="currentColor" onClick={() => openOrg(org.username)}>
                 Open in browser
               </Text>
             </Dropdown.Item>
@@ -191,22 +140,6 @@ function ScratchActionMenu({
                 Update alias
               </Text>
             </Dropdown.Item>
-            <Dropdown.Item
-              withDivider
-              key="delete"
-              color="error"
-              icon={
-                isDeleteOrgLoading ? (
-                  <Loading color="currentColor" size="xs" />
-                ) : (
-                  <DeleteIcon size={22} fill="currentColor" />
-                )
-              }
-            >
-              <Text color="currentColor" onClick={handleOnDeletePress}>
-                {getDeleteButtonText()}
-              </Text>
-            </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </Row>
@@ -214,4 +147,4 @@ function ScratchActionMenu({
   );
 }
 
-export default ScratchActionMenu;
+export default NonScratchActionMenu;

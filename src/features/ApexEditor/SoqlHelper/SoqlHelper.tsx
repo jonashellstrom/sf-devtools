@@ -16,9 +16,9 @@ type SoqlHelperProps = {
 };
 
 function makeDefaultQuery(opt: SoqlQueryOption) {
-  return `\nList<${
+  return `List<${opt.sObject}> ${opt.plural.toLowerCase()} = [SELECT Id FROM ${
     opt.sObject
-  }> ${opt.plural.toLowerCase()} = [SELECT Id FROM ${opt.sObject}];`;
+  }];`;
 }
 
 function getInitialOptions(): SoqlQueryOption[] {

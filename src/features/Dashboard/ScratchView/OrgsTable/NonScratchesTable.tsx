@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 
 import queries from "../../../../mainApi";
 import { ListOrgsSuccessResponse } from "../../../../shared/sfdxResponses";
+import NonScratchActionMenu from "./TableItems/NonScratchActionMenu";
+import OrgActions from "./TableItems/OrgActions";
 
 type NonScratchOrg =
   ListOrgsSuccessResponse["result"]["nonScratchOrgs"][number];
@@ -11,11 +13,11 @@ type NonScratchOrg =
 const COLUMNS = [
   { name: "ORG", uid: "org" },
   { name: "STATUS", uid: "status" },
+  { name: "TYPE", uid: "type" },
   { name: "ACTIONS", uid: "actions" },
 ];
 
 function NonScratchesTable() {
-  // TODO: handle errors
   const { data, isLoading } = useQuery(["list-orgs"], queries.listOrgs);
 
   const nonScratchOrgs = data
@@ -32,7 +34,9 @@ function NonScratchesTable() {
           <>
             <User
               squared
-              src={"./astro.png"}
+              pointer
+              bordered
+              text={org.alias?.slice(0, 1) || "U"}
               name={org.alias || "Unaliased Scratch"}
               css={{
                 p: 0,
@@ -46,12 +50,32 @@ function NonScratchesTable() {
         );
       case "status":
         return (
+          <Row css={{ w: 100 }}>
+            <Badge
+              size="xs"
+              color={
+                org.connectedStatus.toLowerCase() === "connected"
+                  ? "success"
+                  : "warning"
+              }
+            >{`${org.connectedStatus}`}</Badge>
+          </Row>
+        );
+      case "type":
+        return (
           <Row css={{ w: 80 }}>
-            <Badge size="xs">{org.isDevHub ? "DevHub" : "Non-DevHub"}</Badge>
+            <Badge size="xs" color="primary">
+              {org.isDevHub ? "DevHub" : "Non-DevHub"}
+            </Badge>
           </Row>
         );
       case "actions":
-        return <Row justify="center" align="center" css={{ pl: 5 }}></Row>;
+        return (
+          <Row justify="flex-end" align="center" css={{ pl: 5 }}>
+            <OrgActions org={org} />
+            <NonScratchActionMenu org={org} />
+          </Row>
+        );
       default:
         return "";
     }
@@ -80,8 +104,7 @@ function NonScratchesTable() {
             {(column) => (
               <Table.Column
                 key={column.uid}
-                hideHeader={column.uid === "actions"}
-                align={column.uid === "actions" ? "center" : "start"}
+                align={column.uid === "actions" ? "end" : "start"}
               >
                 {column.name}
               </Table.Column>

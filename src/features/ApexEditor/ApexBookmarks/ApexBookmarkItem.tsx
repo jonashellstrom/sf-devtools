@@ -1,10 +1,10 @@
 import { Loading, Row, Text, Tooltip } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
 
-import { DeleteIcon } from "../../../components/icons/DeleteIcon";
 import { IconButton } from "../../Dashboard/ScratchView/IconButton";
 import { type BookmarkedApex, setBookmarksInLocalStorage } from "./utils";
 import mainApi from "../../../mainApi";
+import ActionButton from "../../../components/ActionButton";
 
 type ApexBookmarkItemProps = {
   bookmark: BookmarkedApex;
@@ -47,18 +47,14 @@ function ApexBookmarkItem({
           )}
         </IconButton>
       </Tooltip>
-      <Row justify="flex-end" css={{ width: "auto" }}>
-        <Tooltip
-          content="Delete"
-          color="error"
-          onClick={() => handleOnBookmarkDelete()}
-          css={{ zIndex: "10000000 !important" }}
-        >
-          <IconButton>
-            <DeleteIcon size={16} fill="#BF4C30" />
-          </IconButton>
-        </Tooltip>
-      </Row>
+      <ActionButton
+        onPress={() => handleOnBookmarkDelete()}
+        text="DELETE"
+        color="error"
+        withConfirmPress={{
+          confirmText: "CONFIRM!",
+        }}
+      />
     </Row>
   );
 }

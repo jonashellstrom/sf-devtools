@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import queries from "../../../../mainApi";
 import ScratchExpirationBar from "./ScratchExpirationBar";
 import OrgDetailModal from "./OrgDetailModal";
-import ScratchActions from "./TableItems/ScratchActions";
+import OrgActions from "./TableItems/OrgActions";
 import ScratchActionMenu from "./TableItems/ScratchActionMenu";
 import type { ListOrgsSuccessResponse } from "../../../../shared/sfdxResponses";
 
@@ -28,7 +28,6 @@ const COLUMNS = [
 ];
 
 function ScratchesTable() {
-  // TODO: handle errors
   const { data, isLoading } = useQuery(["list-orgs"], queries.listOrgs);
 
   const scratchOrgs = data?.result.scratchOrgs
@@ -68,22 +67,22 @@ function ScratchesTable() {
         );
       case "status":
         return (
-          <Row css={{ w: 80 }}>
+          <Row css={{ w: 100 }}>
             <Badge color={org.isExpired ? "error" : "success"} size="xs">
-              {org.status.toLocaleUpperCase()}
+              {org.status}
             </Badge>
           </Row>
         );
       case "expiration":
         return (
-          <Row css={{ w: 90 }}>
+          <Row css={{ w: 80 }}>
             <ScratchExpirationBar expirationDate={org.expirationDate} />
           </Row>
         );
       case "actions":
         return (
           <Row justify="flex-end" css={{ width: "auto" }}>
-            <ScratchActions scratchOrg={org} />
+            <OrgActions org={org} />
             <ScratchActionMenu
               scratchOrg={org}
               setVisibleDetailsModal={setVisible}
