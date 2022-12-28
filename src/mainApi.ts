@@ -19,12 +19,12 @@ async function selectFolder() {
 }
 
 async function runAnonymous(apex: string) {
-  const res = await window?.api?.runAnonymous("runAnonymous", sfdxPath, apex);
+  const res = await window?.api?.on("runAnonymous", sfdxPath, [apex]);
   return JSON.parse(res) as RunAnonymousSuccessResponse;
 }
 
 async function runSoql<T>(soql: string) {
-  const res = await window?.api?.runSoql("runSoql", sfdxPath, soql);
+  const res = await window?.api?.on("runSoql", sfdxPath, [soql]);
   return JSON.parse(res) as T;
 }
 
@@ -33,13 +33,11 @@ async function createRecord<T>(
   values: string,
   useToolingApi: boolean
 ) {
-  const res = await window?.api?.createRecord(
-    "createRecord",
-    sfdxPath,
+  const res = await window?.api?.on("createRecord", sfdxPath, [
     sObjectType,
     values,
-    useToolingApi
-  );
+    useToolingApi,
+  ]);
   const parsed = JSON.parse(res);
   if (sfdxResponses.isSuccessResponse<T>(parsed)) {
     return parsed;
@@ -53,18 +51,16 @@ async function deleteRecord(
   id: string,
   useToolingApi: boolean
 ) {
-  const res = await window?.api?.deleteRecord(
-    "deleteRecord",
-    sfdxPath,
+  const res = await window?.api?.on("deleteRecord", sfdxPath, [
     sObjectType,
     id,
-    useToolingApi
-  );
+    useToolingApi,
+  ]);
   return JSON.parse(res);
 }
 
 async function listLogs() {
-  const res = await window?.api?.listLogs("listLogs", sfdxPath);
+  const res = await window?.api?.on("listLogs", sfdxPath);
   const logsResponse = JSON.parse(res) as ListLogsResponse;
 
   return {
@@ -74,42 +70,40 @@ async function listLogs() {
 }
 
 async function getLog(logId: string, logData: ListLogsResponse["result"][0]) {
-  const res = await window?.api?.getLog("getLog", sfdxPath, logId);
+  const res = await window?.api?.on("getLog", sfdxPath, [logId]);
   const parsedRes = JSON.parse(res);
   return { ...parsedRes, logData } as GetLogResponse;
 }
 
 async function bulkDeleteLogs() {
-  await window?.api?.bulkDeleteLogs("bulkDeleteLogs", sfdxPath);
+  await window?.api?.on<void>("bulkDeleteLogs", sfdxPath);
 }
 
 async function displayUser() {
-  const res = await window?.api?.fetchCurrentUser("fetchCurrentUser", sfdxPath);
+  const res = await window?.api?.on("fetchCurrentUser", sfdxPath);
   return JSON.parse(res) as CurrentUserSuccessResponse;
 }
 
 async function setDefaultOrg(username: string) {
-  await window?.api?.setDefaultOrg("setDefaultOrg", sfdxPath, username);
+  await window?.api?.on("setDefaultOrg", sfdxPath, [username]);
 }
 
 async function listLimits() {
-  const res = await window?.api?.listLimits("listLimits", sfdxPath);
+  const res = await window?.api?.on("listLimits", sfdxPath);
   return JSON.parse(res) as ListLimitsSuccessResponse;
 }
 
 async function listOrgs() {
-  const res = await window?.api?.listOrgs("listOrgs", sfdxPath);
+  const res = await window?.api?.on("listOrgs", sfdxPath);
   const listOrgsRes = JSON.parse(res);
   return listOrgsRes as ListOrgsSuccessResponse;
 }
 
 async function setAliasForOrg(username: string, alias: string) {
-  const res = await window?.api?.setAliasForOrg(
-    "setAliasForOrg",
-    sfdxPath,
+  const res = await window?.api?.on("setAliasForOrg", sfdxPath, [
     username,
-    alias
-  );
+    alias,
+  ]);
 
   const setAliasForOrgRes = JSON.parse(res) as SfdxResponse;
   if (setAliasForOrgRes.status === 0) return setAliasForOrgRes;
@@ -117,15 +111,11 @@ async function setAliasForOrg(username: string, alias: string) {
 }
 
 async function openOrg(username: string) {
-  await window?.api?.openOrg("openOrg", sfdxPath, username);
+  await window?.api?.on("openOrg", sfdxPath, [username]);
 }
 
 async function markScratchForDeletion(username: string) {
-  await window?.api?.markScratchForDeletion(
-    "markScratchForDeletion",
-    sfdxPath,
-    username
-  );
+  await window?.api?.on("markScratchForDeletion", sfdxPath, [username]);
 }
 
 const mainApi = {

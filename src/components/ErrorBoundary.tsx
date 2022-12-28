@@ -1,4 +1,5 @@
 import { Component, ErrorInfo, ReactNode } from "react";
+import { Container, Text } from "@nextui-org/react";
 
 interface Props {
   children?: ReactNode;
@@ -24,7 +25,15 @@ class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
-      return <h1>Sorry.. something went wrong</h1>;
+      return (
+        <Container
+          css={{ height: "100vh", width: "100vw" }}
+          alignItems="center"
+          justify="center"
+        >
+          <Text h2>Sorry... something went wrong 🫠</Text>
+        </Container>
+      );
     }
 
     return this.props.children;
