@@ -47,6 +47,7 @@ function CodeEditor({
         ...editorContainerStyle,
         height: `${minHeight + 1}px`,
         position: "relative",
+        borderColor: "#bbb",
       }}
     >
       <ReactCodeEditor

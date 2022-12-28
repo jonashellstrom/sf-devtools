@@ -11,7 +11,7 @@ function getProgressColor(
 ): ProgressProps["color"] {
   if (consumptionPercentage < 30) return "warning";
   else if (consumptionPercentage < 10) return "error";
-  else return "success";
+  else return "secondary";
 }
 
 const WIDTH = "260px";

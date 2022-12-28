@@ -34,7 +34,7 @@ function OrgActions({ org }: OrgActionsProps) {
         isDisabled={isSetDefaultOrgLoading}
         onPress={() => setDefaultOrg(org.username)}
         withTooltip={{
-          tooltipText: "Set this org as default SFDX org",
+          tooltipText: "Set this org as your default SFDX org",
         }}
       />
     </Row>

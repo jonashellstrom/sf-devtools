@@ -1,5 +1,5 @@
 /* GITHUB THEME */
-[data-color-mode*="light"] .github {
+[data-color-mode*="light"] .github-theme {
   color: #24292f;
   background-color: #f6f8fa;
   --color-fg-default: #24292f;
@@ -7,14 +7,14 @@
   --color-prettylights-syntax-comment: #6e7781;
   --color-prettylights-syntax-entity-tag: #116329;
   --color-prettylights-syntax-entity: #8250df;
-  --color-prettylights-syntax-sublimelinter-gutter-mark: #777d83;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #777686;
   --color-prettylights-syntax-constant: #0550ae;
   --color-prettylights-syntax-variable: #0550ae;
   --color-prettylights-syntax-string: #0a3069;
   --color-prettylights-syntax-keyword: #cf222e;
   --color-prettylights-syntax-markup-bold: #24292f;
 }
-[data-color-mode*="dark"] .github {
+[data-color-mode*="dark"] .github-theme {
   color: #c9d1d9;
   background-color: #161b22;
   --color-fg-default: #c9d1d9;
@@ -22,7 +22,7 @@
   --color-prettylights-syntax-comment: #8b949e;
   --color-prettylights-syntax-entity-tag: #7ee787;
   --color-prettylights-syntax-entity: #d2a8ff;
-  --color-prettylights-syntax-sublimelinter-gutter-mark: #484f58;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #8a919c;
   --color-prettylights-syntax-constant: #79c0ff;
   --color-prettylights-syntax-variable: #79c0ff;
   --color-prettylights-syntax-string: #a5d6ff;
@@ -60,4 +60,36 @@
   --color-prettylights-syntax-string: #ecc48d;
   --color-prettylights-syntax-keyword: #c792ea;
   --color-prettylights-syntax-markup-bold: #c5e478;
+}
+
+/* AYU THEME */
+[data-color-mode*="light"] .ayu-theme {
+  color: #5c6166;
+  background-color: #f8f9fa;
+  --color-fg-default: #5c6166;
+  --color-canvas-subtle: #f8f9fa;
+  --color-prettylights-syntax-comment: #787b8099;
+  --color-prettylights-syntax-entity-tag: #55b4d4;
+  --color-prettylights-syntax-entity: #399ee6;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #777686;
+  --color-prettylights-syntax-constant: #a37acc;
+  --color-prettylights-syntax-variable: #86b300;
+  --color-prettylights-syntax-string: #86b300;
+  --color-prettylights-syntax-keyword: #fa8d3e;
+  --color-prettylights-syntax-markup-bold: #86b300;
+}
+[data-color-mode*="dark"] .ayu-theme {
+  color: #cccac2;
+  background-color: #242936;
+  --color-fg-default: #cccac2;
+  --color-canvas-subtle: #242936;
+  --color-prettylights-syntax-comment: #b8cfe680;
+  --color-prettylights-syntax-entity-tag: #5ccfe6;
+  --color-prettylights-syntax-entity: #73d0ff;
+  --color-prettylights-syntax-sublimelinter-gutter-mark: #8a919c;
+  --color-prettylights-syntax-constant: #dfbfff;
+  --color-prettylights-syntax-variable: #d5ff80;
+  --color-prettylights-syntax-string: #d5ff80;
+  --color-prettylights-syntax-keyword: #ffad66;
+  --color-prettylights-syntax-markup-bold: #d5ff80;
 }

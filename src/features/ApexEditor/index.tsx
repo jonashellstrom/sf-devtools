@@ -2,7 +2,9 @@ import { Button, Container, Row, Text } from "@nextui-org/react";
 import shallow from "zustand/shallow";
 
 import useDebouncedSaveToLocalStorage from "../../hooks/useDebouncedSaveToLocalStorage";
-import useEditorTheme from "../../hooks/useEditorTheme/useEditorTheme";
+import useEditorTheme, {
+  getNextTheme,
+} from "../../hooks/useEditorTheme/useEditorTheme";
 import { useZustand } from "../../hooks/useZustand";
 import { LOCAL_STORAGE_KEYS } from "../../shared/constants";
 import ApexBookmarks from "./ApexBookmarks/ApexBookmarks";
@@ -14,7 +16,7 @@ function ApexEditor() {
     shallow
   );
   const isEditorExpanded = useZustand((state) => state.isEditorExpanded);
-  const { themes, currentTheme, setTheme } = useEditorTheme();
+  const { currentTheme, setTheme } = useEditorTheme();
 
   useDebouncedSaveToLocalStorage(
     LOCAL_STORAGE_KEYS.EDITOR_IS_EXPANDED,
@@ -35,17 +37,13 @@ function ApexEditor() {
           <Button
             size="xs"
             auto
-            css={{ fontSize: "x-small", fontWeight: "$bold", minWidth: "77px" }}
+            css={{ fontSize: "x-small", fontWeight: "$bold", minWidth: "80px" }}
             flat
             onPress={() => {
-              setTheme(
-                currentTheme === themes.GITHUB
-                  ? themes.NIGHT_OWL
-                  : themes.GITHUB
-              );
+              setTheme(getNextTheme(currentTheme));
             }}
           >
-            THEME
+            {currentTheme}
           </Button>
           <Button
             size="xs"

@@ -72,10 +72,9 @@ function DebugLogs() {
         <Progress
           size="xs"
           value={(finishedCount / logsQueries.length) * 100}
-          color={isDoneFetching ? "success" : "warning"}
-          striped={!isDoneFetching}
+          color={isDoneFetching ? "secondary" : "warning"}
           animated
-          css={{ mb: 15 }}
+          css={{ mb: 15, border: "0.5px solid #ccc", height: "5px" }}
         />
       </Col>
       {logsQueries.map((logQuery, i) => {

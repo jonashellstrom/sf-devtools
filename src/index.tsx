@@ -7,13 +7,15 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import SetupWrapper from "./features/Setup/SetupWrapper";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const lightTheme = createTheme({
     type: "light",
     theme: {
       colors: {
-        background: "#EDF0F2",
-        backgroundAlpha: "rgba(237, 240, 242, 0.7)",
+        background: "#F4F4F4",
+        backgroundAlpha: "rgba(244, 244, 244, 0.7)",
         codeLight: "transparent",
         primaryLight: "#B7CFED",
         primaryLightHover: "#C5D9F1",
@@ -21,21 +23,10 @@ const lightTheme = createTheme({
         primaryLightContrast: "#081F3E",
         primary: "#081F3E",
         primaryBorder: "red",
-        primaryBorderHover: "red",
         primarySolid: "#134A92",
         primarySolidHover: "#134A92",
         primarySolidContrast: "#FFFFFF",
-        primaryShadow: "$green500",
-        secondaryLight: "#354F78",
-        secondaryLightHover: "#12A5B2",
-        secondaryLightActive: "#0F8089",
-        secondaryLightContrast: "#FFFFFF",
-        secondary: "#50AE32",
-        secondaryBorder: "red",
-        secondaryBorderHover: "blue",
-        secondarySolidHover: "yellow",
-        secondarySolidContrast: "#FFFFFF",
-        secondaryShadow: "orange",
+        secondary: "linear-gradient(120deg, #68ABF8, #53E492)",
         error: "#BF4C30",
         errorLight: "#EFC9C0",
         errorLightContrast: "#BF4C30",
@@ -56,40 +47,32 @@ const lightTheme = createTheme({
     type: "dark",
     theme: {
       colors: {
-        background: "#081F3E",
-        backgroundAlpha: "rgba(23, 28, 46, 0.7)",
+        background: "#212121",
+        backgroundAlpha: "rgba(33, 33, 33, 0.3)",
+        backgroundContrast: "#292929",
         codeLight: "transparent",
-        primaryLight: "#c7d8ed",
-        primaryLightHover: "#d8e1ed",
-        primaryLightActive: "#c2d5ed",
-        primaryLightContrast: "#385d8f",
-        primary: "#385d8f",
-        primaryBorder: "red",
-        primaryBorderHover: "red",
-        primarySolid: "orange",
-        primarySolidHover: "orange",
-        primarySolidContrast: "#FFFFFF",
-        primaryShadow: "$green500",
+        primaryLight: "#17365D",
+        primaryLightHover: "#0E2746",
+        primaryLightActive: "#1E3D64",
+        primaryLightContrast: "#D0E5FF",
+        primary: "#9AB8E0",
+        primarySolid: "#0E4184",
+        primarySolidContrast: "#1053AB",
         secondaryLight: "#354F78",
         secondaryLightHover: "#12A5B2",
         secondaryLightActive: "#0F8089",
         secondaryLightContrast: "#FFFFFF",
-        secondary: "#50AE32",
-        secondaryBorder: "red",
-        secondaryBorderHover: "blue",
-        secondarySolidHover: "yellow",
-        secondarySolidContrast: "#FFFFFF",
-        secondaryShadow: "orange",
-        error: "#db6f63",
-        errorLight: "#ffd1cc",
-        errorLightContrast: "#db6f63",
-        errorLightHover: "#ffe3e0",
-        errorLightActive: "#ffc8c2",
-        success: "#50AE32",
-        successLight: "#c0ebb2",
-        successLightContrast: "#50AE32",
-        successLightHover: "#d9f5d0",
-        successLightActive: "#b9eda8",
+        secondary: "linear-gradient(120deg, #68ABF8, #53E492)",
+        warning: "#e8ae24",
+        error: "#8E1A4A",
+        errorLight: "#992857",
+        errorLightContrast: "#FEAFD0",
+        errorLightHover: "#B54373",
+        errorLightActive: "#AB2E63",
+        success: "#599B44",
+      },
+      space: {
+        "span.code-line": 0,
       },
     },
   });
@@ -109,20 +92,24 @@ const queryClient = new QueryClient({
 
 root.render(
   <React.StrictMode>
-    <NextThemesProvider
-      defaultTheme="system"
-      attribute="class"
-      value={{
-        light: lightTheme.className,
-        dark: darkTheme.className,
-      }}
-    >
-      <NextUIProvider>
-        <QueryClientProvider client={queryClient}>
-          <App />
-        </QueryClientProvider>
-      </NextUIProvider>
-    </NextThemesProvider>
+    <ErrorBoundary>
+      <NextThemesProvider
+        defaultTheme="system"
+        attribute="class"
+        value={{
+          light: lightTheme.className,
+          dark: darkTheme.className,
+        }}
+      >
+        <NextUIProvider>
+          <SetupWrapper>
+            <QueryClientProvider client={queryClient}>
+              <App />
+            </QueryClientProvider>
+          </SetupWrapper>
+        </NextUIProvider>
+      </NextThemesProvider>
+    </ErrorBoundary>
   </React.StrictMode>
 );
 

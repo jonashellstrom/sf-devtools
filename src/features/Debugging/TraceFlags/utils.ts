@@ -5,7 +5,7 @@ import { type TraceFlag } from "./types";
 function getProgressColor(
   elapsedTimePercentage: number
 ): ProgressProps["color"] {
-  if (elapsedTimePercentage < 70) return "default";
+  if (elapsedTimePercentage < 70) return "secondary";
   else if (elapsedTimePercentage < 90) return "warning";
   else return "error";
 }
@@ -27,6 +27,7 @@ function getFlagProgress(traceFlag: TraceFlag) {
     isFuture,
     isExpired,
     expirationDateTime,
+    startDateTime,
   };
 }
 

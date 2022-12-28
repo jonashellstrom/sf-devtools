@@ -25,9 +25,11 @@ type TraceFlagItemProps = {
 function getRelativeExpirationTime(
   isFuture: boolean,
   isExpired: boolean,
-  expirationDateTime: DateTime
+  expirationDateTime: DateTime,
+  startDateTime: DateTime
 ) {
-  if (isFuture) return "Starts " + expirationDateTime.toRelative();
+  if (isFuture)
+    return "Starts on " + startDateTime.toFormat("LLL d, yyyy 'at' h:mm:ss a");
   if (isExpired) return expirationDateTime.toRelative();
   return "Expires " + expirationDateTime.toRelative();
 }
@@ -35,12 +37,24 @@ function getRelativeExpirationTime(
 function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
   const queryClient = useQueryClient();
 
-  const { elapsedTimePercentage, isFuture, isExpired, expirationDateTime } =
-    utils.getFlagProgress(traceFlag);
+  const {
+    elapsedTimePercentage,
+    isFuture,
+    isExpired,
+    expirationDateTime,
+    startDateTime,
+  } = utils.getFlagProgress(traceFlag);
 
   const [relativeExpirationTime, setRelativeExpirationTime] = useState<
     string | null
-  >(getRelativeExpirationTime(isFuture, isExpired, expirationDateTime));
+  >(
+    getRelativeExpirationTime(
+      isFuture,
+      isExpired,
+      expirationDateTime,
+      startDateTime
+    )
+  );
 
   const { mutate: deleteFlag, isLoading: isMutationLoading } = useMutation(
     () => mainApi.deleteRecord("TraceFlag", traceFlag.Id, true),
@@ -55,15 +69,24 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
 
   setInterval(() => {
     setRelativeExpirationTime(
-      getRelativeExpirationTime(isFuture, isExpired, expirationDateTime)
+      getRelativeExpirationTime(
+        isFuture,
+        isExpired,
+        expirationDateTime,
+        startDateTime
+      )
     );
   }, 5000);
 
   const [isCollapsibleOpen, setIsCollapsibleOpen] = useState(true);
 
   return (
-    <CollapsingWrapper isOpen={isCollapsibleOpen} initialHeight={7}>
-      <Card variant="bordered" css={{ mb: 15 }}>
+    <CollapsingWrapper
+      isOpen={isCollapsibleOpen}
+      initialHeight={7}
+      marginBottom={15}
+    >
+      <Card variant="bordered" css={{ mb: 10, mt: 10 }}>
         <Card.Body>
           <Row align="flex-start" justify="space-between">
             <Col css={{ mr: 10 }}>
@@ -90,7 +113,10 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
               </Row>
               {!isExpired && !isFuture && (
                 <Progress
-                  size="xs"
+                  css={{
+                    border: "0.5px solid #ccc",
+                    height: "5px",
+                  }}
                   value={elapsedTimePercentage}
                   color={utils.getProgressColor(elapsedTimePercentage)}
                 />

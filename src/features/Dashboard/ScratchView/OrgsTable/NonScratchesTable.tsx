@@ -90,8 +90,7 @@ function NonScratchesTable() {
       </Row>
       {isLoading ? (
         <Loading
-          color="primary"
-          textColor="primary"
+          color="secondary"
           type="points"
           css={{ pt: 30, width: "100%" }}
           size="md"

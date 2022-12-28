@@ -1,33 +1,24 @@
-import {
-  Button,
-  Col,
-  Dropdown,
-  Input,
-  Loading,
-  Modal,
-  Row,
-  Text,
-  useModal,
-} from "@nextui-org/react";
+import { useState } from "react";
+import { Dropdown, Loading, Row, Text, useModal } from "@nextui-org/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import mainApi from "../../../../../mainApi";
-import { DeleteIcon } from "../DeleteIcon";
 import type { ListOrgsSuccessResponse } from "../../../../../shared/sfdxResponses";
-import { useState } from "react";
+import SetAliasModal from "./SetAliasModal";
+import { DeleteIcon } from "../../../../../components/icons/DeleteIcon";
 
 type ScratchOrg = ListOrgsSuccessResponse["result"]["scratchOrgs"][number];
 
 type ScratchActionMenuProps = {
   scratchOrg: ScratchOrg;
-  setVisibleDetailsModal: (open: boolean) => void;
+  onSetDetailedScratch: (org: ScratchOrg) => void;
 };
 
 export const CONFIRM_DELETE_TEXT = "⚠️ Click again to confirm!";
 
 function ScratchActionMenu({
   scratchOrg,
-  setVisibleDetailsModal,
+  onSetDetailedScratch,
 }: ScratchActionMenuProps) {
   const queryClient = useQueryClient();
 
@@ -35,21 +26,6 @@ function ScratchActionMenu({
     (username: string) => mainApi.openOrg(username)
   );
 
-  const {
-    mutate: setAliasForOrg,
-    isLoading: isSetAliasForOrgLoading,
-    isError,
-  } = useMutation(
-    (alias: string) => mainApi.setAliasForOrg(scratchOrg.username, alias),
-    {
-      onSuccess() {
-        queryClient.invalidateQueries({
-          queryKey: ["list-orgs"],
-        });
-        setVisible(false);
-      },
-    }
-  );
   const { mutate: markScratchForDeletion, isLoading: isDeleteOrgLoading } =
     useMutation(
       (username: string) => mainApi.markScratchForDeletion(username),
@@ -81,64 +57,15 @@ function ScratchActionMenu({
   }
 
   const { setVisible, bindings } = useModal();
-  const [newAlias, setNewAlias] = useState("");
-  function handleSetAliasPress() {
-    if (!!newAlias) {
-      setAliasForOrg(newAlias);
-    }
-  }
 
   return (
     <>
-      <Modal
-        open={bindings.open}
-        blur
-        closeButton
-        aria-labelledby="set-alias-modal"
-        onClose={() => setVisible(false)}
-      >
-        <Modal.Header>
-          <Col>
-            <Text size="$md" b>
-              {`Set an alias for org ${scratchOrg.orgId}`}
-            </Text>
-            {!!scratchOrg.alias && (
-              <Text size="$sm">{`Current alias: ${scratchOrg.alias}`}</Text>
-            )}
-          </Col>
-        </Modal.Header>
-        <Modal.Body css={{ pt: 30 }}>
-          <Input
-            bordered
-            clearable
-            labelPlaceholder="New Alias"
-            color="primary"
-            value={newAlias}
-            onChange={(e) => setNewAlias(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSetAliasPress();
-              }
-            }}
-          />
-          {isError && (
-            <Text
-              size="$sm"
-              color="error"
-            >{`⛔️ Something went wrong updating alias`}</Text>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            auto
-            onPress={handleSetAliasPress}
-            color="primary"
-            disabled={!newAlias}
-          >
-            {isSetAliasForOrgLoading ? <Loading size="sm" /> : "Set alias"}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <SetAliasModal
+        org={scratchOrg}
+        modalBindings={bindings}
+        setVisible={setVisible}
+      />
+
       <Row justify="flex-end" align="center" css={{ ml: 10, width: "auto" }}>
         <Dropdown closeOnSelect={false} shouldCloseOnBlur>
           <Dropdown.Button
@@ -150,15 +77,10 @@ function ScratchActionMenu({
             MORE
           </Dropdown.Button>
           <Dropdown.Menu color="primary" aria-label="Actions">
-            <Dropdown.Item
-              key="details"
-              icon={
-                <DeleteIcon size={22} fill="var(--nextui-colors-primary)" />
-              }
-            >
+            <Dropdown.Item key="details">
               <Text
                 onClick={() => {
-                  setVisibleDetailsModal(true);
+                  onSetDetailedScratch(scratchOrg);
                 }}
               >
                 See details
@@ -167,11 +89,7 @@ function ScratchActionMenu({
             <Dropdown.Item
               key="open"
               icon={
-                isOpenOrgLoading ? (
-                  <Loading color="currentColor" size="xs" />
-                ) : (
-                  <DeleteIcon size={22} fill="var(--nextui-colors-primary)" />
-                )
+                isOpenOrgLoading && <Loading color="currentColor" size="xs" />
               }
             >
               <Text
@@ -181,12 +99,7 @@ function ScratchActionMenu({
                 Open in browser
               </Text>
             </Dropdown.Item>
-            <Dropdown.Item
-              key="update-alias"
-              icon={
-                <DeleteIcon size={22} fill="var(--nextui-colors-primary)" />
-              }
-            >
+            <Dropdown.Item key="update-alias">
               <Text onClick={() => setVisible(!bindings.open)}>
                 Update alias
               </Text>
@@ -199,7 +112,7 @@ function ScratchActionMenu({
                 isDeleteOrgLoading ? (
                   <Loading color="currentColor" size="xs" />
                 ) : (
-                  <DeleteIcon size={22} fill="currentColor" />
+                  <DeleteIcon size={18} fill="currentColor" />
                 )
               }
             >

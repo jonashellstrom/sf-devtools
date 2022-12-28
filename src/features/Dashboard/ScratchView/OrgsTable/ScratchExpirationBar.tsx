@@ -11,7 +11,7 @@ type ScratchExpirationBarProps = { expirationDate: string };
 function getColorBasedOnExpiration(percentage: number): ProgressProps["color"] {
   if (percentage < 0.2) return "error";
   else if (percentage < 0.4) return "warning";
-  else return "success";
+  else return "secondary";
 }
 
 function ScratchExpirationBar({ expirationDate }: ScratchExpirationBarProps) {
@@ -22,9 +22,12 @@ function ScratchExpirationBar({ expirationDate }: ScratchExpirationBarProps) {
     <Container gap={0} direction="column" alignItems="flex-end">
       <Text size="small">{`${expirationDate}`}</Text>
       <Progress
-        size="xs"
         value={remainingPercentage * 100}
         color={getColorBasedOnExpiration(remainingPercentage)}
+        css={{
+          border: "0.5px solid #ccc",
+          height: "5px",
+        }}
       />
       {remainingPercentage < 0 ? (
         <Text size="small">{`Expired`}</Text>

@@ -3,11 +3,13 @@ import React, { useEffect, useRef, useState } from "react";
 type CollapseProps = {
   isOpen: boolean;
   initialHeight: number;
+  marginBottom?: number;
 };
 
 function CollapsingWrapper({
   isOpen = true,
   initialHeight,
+  marginBottom,
   children,
 }: React.PropsWithChildren<CollapseProps>) {
   const [height, setHeight] = useState(`${initialHeight}rem`);
@@ -26,6 +28,7 @@ function CollapsingWrapper({
       className={isOpen ? "" : "collapse"}
       style={{
         maxHeight: isOpen ? height : 0,
+        marginBottom,
       }}
     >
       <div ref={ref}>{children}</div>

@@ -20,12 +20,7 @@ function CurrentUserDetails() {
         </Row>
         <Row>
           {isLoading ? (
-            <Loading
-              color="primary"
-              textColor="primary"
-              type="points"
-              size="xs"
-            >
+            <Loading color="secondary" type="points" size="xs">
               <Text size="$sm" css={{ pt: 5 }}>
                 Getting default org...
               </Text>
@@ -43,9 +38,9 @@ function CurrentUserDetails() {
                   onClick={() => data && openOrg(data.result.username)}
                   css={{
                     cursor: "pointer",
-                    color: "$success",
+                    color: "#68ABF8",
                     "&:hover": {
-                      fontWeight: "$semibold",
+                      color: "#4187D8",
                     },
                   }}
                 >

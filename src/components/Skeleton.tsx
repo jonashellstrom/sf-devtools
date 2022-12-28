@@ -16,7 +16,7 @@ function Skeleton({ height = 97, width, marginTop = -10 }: SkeletonProps) {
         borderRadius: 15,
         marginBottom: 15,
         marginTop,
-        border: "0.5px solid grey",
+        border: "0.5px solid #bbb",
       }}
     />
   );

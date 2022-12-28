@@ -75,7 +75,7 @@ function ApexEditorActionRow() {
             <Loading color="currentColor" size="sm" type="points" />
           ) : (
             <>
-              <Text color="white" b>
+              <Text color="currentColor" b>
                 Run ▶️
               </Text>
             </>

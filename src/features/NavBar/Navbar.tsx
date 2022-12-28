@@ -16,15 +16,9 @@ function Navbar() {
 
   return (
     <NUINavbar isBordered variant="floating" css={{ zIndex: 10000 }}>
-      <NUINavbar.Brand css={{ width: "100px" }}>
-        <Text
-          size={20}
-          css={{
-            textGradient: "45deg, $blue600 -20%, $green600 80%",
-          }}
-          weight="bold"
-        >
-          SF DevTools 🛠
+      <NUINavbar.Brand>
+        <Text size={24} weight="bold">
+          SF DevTools
         </Text>
       </NUINavbar.Brand>
       <NUINavbar.Content
@@ -51,7 +45,7 @@ function Navbar() {
           Debug Logs
         </NUINavbar.Link>
       </NUINavbar.Content>
-      <NUINavbar.Content css={{ width: "180px", justifyContent: "flex-end" }}>
+      <NUINavbar.Content css={{ justifyContent: "flex-end" }}>
         <Row align="center">
           <MiniOrgInfo />
           <NavbarActions />

@@ -1,16 +1,5 @@
-import {
-  Button,
-  Col,
-  Divider,
-  Modal,
-  Table,
-  Text,
-  Tooltip,
-} from "@nextui-org/react";
+import { Button, Divider, Modal, Table, Text } from "@nextui-org/react";
 
-import { EditIcon } from "./EditIcon";
-import { IconButton } from "./IconButton";
-import useWithCopyToClipboard from "../../../../hooks/useWithCopyToClipboard";
 import type { ListOrgsSuccessResponse } from "../../../../shared/sfdxResponses";
 
 type ScratchOrg = ListOrgsSuccessResponse["result"]["scratchOrgs"][number];
@@ -18,7 +7,7 @@ type NonScratchOrg =
   ListOrgsSuccessResponse["result"]["nonScratchOrgs"][number];
 
 type OrgDetailModalProps = {
-  scratchItem: ScratchOrg | NonScratchOrg;
+  org: ScratchOrg | NonScratchOrg;
   modalBindings: {
     open: boolean;
     onClose: () => void;
@@ -27,7 +16,7 @@ type OrgDetailModalProps = {
 };
 
 function OrgDetailModal({
-  scratchItem,
+  org,
   modalBindings,
   setVisible,
 }: OrgDetailModalProps) {
@@ -45,28 +34,26 @@ function OrgDetailModal({
     {
       key: "1",
       detail: "Username",
-      value: scratchItem.username,
+      value: org.username,
     },
     {
       key: "2",
       detail: "Instance URL",
-      value: scratchItem.instanceUrl,
+      value: org.instanceUrl,
     },
     {
       key: "3",
       detail: "Org ID (18 char)",
-      value: scratchItem.orgId,
+      value: org.orgId,
     },
     {
       key: "3",
       detail: "Org ID (15 char)",
-      value: scratchItem.orgId.substring(0, 15),
+      value: org.orgId.substring(0, 15),
     },
   ];
-  const { handleOnCopyPress, CopyToClipboardWrapper } =
-    useWithCopyToClipboard();
 
-  const displayName = scratchItem.alias ? scratchItem.alias : "Unaliased";
+  const displayName = org.alias ? org.alias : "Unaliased";
   return (
     <Modal
       scroll
@@ -77,7 +64,7 @@ function OrgDetailModal({
     >
       <Modal.Header>
         <Text b size={18}>
-          {`${displayName} Scratch`}
+          {`${displayName} Org`}
         </Text>
       </Modal.Header>
       <Divider />
@@ -99,18 +86,8 @@ function OrgDetailModal({
               <Table.Row key={item.key}>
                 {(columnKey) => (
                   <Table.Cell>
-                    <CopyToClipboardWrapper>
-                      <Text
-                        // @ts-ignore
-                        onPress={async () =>
-                          // @ts-ignore
-                          await handleOnCopyPress(item[columnKey])
-                        }
-                      >
-                        {/* @ts-ignore */}
-                        {item[columnKey]}
-                      </Text>
-                    </CopyToClipboardWrapper>
+                    {/* @ts-ignore */}
+                    {item[columnKey]}
                   </Table.Cell>
                 )}
               </Table.Row>
@@ -119,16 +96,6 @@ function OrgDetailModal({
         </Table>
       </Modal.Body>
       <Modal.Footer>
-        <Col css={{ d: "flex" }}>
-          <Tooltip
-            content="Copy to clipboard"
-            css={{ zIndex: "10000 !important" }}
-          >
-            <IconButton onClick={() => console.log("Edit user")}>
-              <EditIcon size={20} fill="#979797" />
-            </IconButton>
-          </Tooltip>
-        </Col>
         <Button auto flat color="default" onPress={() => setVisible(false)}>
           Close
         </Button>

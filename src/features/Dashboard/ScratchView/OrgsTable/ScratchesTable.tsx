@@ -40,6 +40,11 @@ function ScratchesTable() {
 
   const [detailedScratch, setDetailedScratch] = useState<ScratchOrg>();
 
+  function handleSetDetailedScratch(org: ScratchOrg) {
+    setDetailedScratch(org);
+    setVisible(true);
+  }
+
   function renderTableCell(org: ScratchOrg, columnKey: React.Key) {
     switch (columnKey) {
       case "org":
@@ -57,8 +62,7 @@ function ScratchesTable() {
                 justifyContent: "flex-start",
               }}
               onClick={() => {
-                setDetailedScratch(org);
-                setVisible(true);
+                handleSetDetailedScratch(org);
               }}
             >
               {org.orgId}
@@ -85,7 +89,7 @@ function ScratchesTable() {
             <OrgActions org={org} />
             <ScratchActionMenu
               scratchOrg={org}
-              setVisibleDetailsModal={setVisible}
+              onSetDetailedScratch={handleSetDetailedScratch}
             />
           </Row>
         );
@@ -98,7 +102,7 @@ function ScratchesTable() {
     <Col css={{ width: "100%" }}>
       {detailedScratch && (
         <OrgDetailModal
-          scratchItem={detailedScratch}
+          org={detailedScratch}
           modalBindings={bindings}
           setVisible={setVisible}
         />
@@ -110,8 +114,7 @@ function ScratchesTable() {
       </Row>
       {isLoading ? (
         <Loading
-          color="primary"
-          textColor="primary"
+          color="secondary"
           type="points"
           css={{ pt: 30, width: "100%" }}
           size="md"
@@ -124,8 +127,7 @@ function ScratchesTable() {
             {(column) => (
               <Table.Column
                 key={column.uid}
-                hideHeader={column.uid === "actions"}
-                align={column.uid === "actions" ? "center" : "start"}
+                align={column.uid === "actions" ? "end" : "start"}
               >
                 {column.name}
               </Table.Column>

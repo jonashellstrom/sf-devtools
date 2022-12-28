@@ -39,9 +39,9 @@ pre code {
 }
 
 [data-color-mode*="light"] .w-tc-editor {
-  background-color: #f4f4f4;
+  background-color: #f2f1f1;
 }
 
 [data-color-mode*="dark"] .w-tc-editor {
-  background-color: #081f3e;
+  background-color: rgb(39, 39, 39);
 }
