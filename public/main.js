@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog, protocol } = require("electron");
 const path = require("path");
 const { exec: childProcessExec } = require("child_process");
+const fixPath = require("fix-path");
 
 const CLI_JSON_SANITIZING_PATTERN =
   /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g;
@@ -21,16 +22,18 @@ async function createWindow() {
       enableRemoteModule: false, // turn off remote
       preload: path.join(__dirname, "preload.js"),
     },
+    icon: path.join(__dirname, "icon.icns"),
   });
+
+  if (app.isPackaged) {
+    fixPath(); // fixes the $PATH when running packaged app
+  }
+
   const appURL = app.isPackaged
-    ? URL.format({
-        pathname: path.join(__dirname, "index.html"),
-        protocol: "file:",
-        slashes: true,
-      })
+    ? `file://${path.resolve(__dirname, "./index.html")}`
     : "http://localhost:3000";
 
-  win.loadURL(appURL); // Load app
+  win.loadURL(appURL);
 
   // Automatically open Chrome's DevTools in development mode.
   if (!app.isPackaged) {
