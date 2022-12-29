@@ -13,7 +13,7 @@ function SetupWrapper({ children }: React.PropsWithChildren) {
           width: "100vw",
           height: "100vh",
           maxWidth: "100%",
-          backgroundImage: "linear-gradient(130deg, white, #68ABF8, #53E492)",
+          backgroundImage: "linear-gradient(130deg, #56DFFF, #4EFFCC)",
         }}
       >
         <SetupModal />

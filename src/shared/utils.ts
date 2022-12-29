@@ -1,4 +1,3 @@
-const DEBUG_REGEX = /\|DEBUG\|(.*)[\n\r]/g;
 const DEBUG_AND_ERROR_REGEX = /\|(DEBUG|ERROR)\|(.*)[\n\r]/g;
 
 function getOnlyDebugAndErrorLogLines(rawLogs: string) {
