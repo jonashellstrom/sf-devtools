@@ -1,6 +1,6 @@
 import { Button, Divider, Modal, Table, Text } from "@nextui-org/react";
 
-import type { ListOrgsSuccessResponse } from "../../../../shared/sfdxResponses";
+import type { ListOrgsSuccessResponse } from "../../../../../shared/sfdxResponses";
 
 type ScratchOrg = ListOrgsSuccessResponse["result"]["scratchOrgs"][number];
 type NonScratchOrg =

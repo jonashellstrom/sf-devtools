@@ -3,17 +3,14 @@ import {
   Table,
   Row,
   Text,
-  Loading,
   User,
   useModal,
   Badge,
   Col,
 } from "@nextui-org/react";
-import { useQuery } from "@tanstack/react-query";
 
-import queries from "../../../../mainApi";
-import ScratchExpirationBar from "./ScratchExpirationBar";
-import OrgDetailModal from "./OrgDetailModal";
+import ScratchExpirationBar from "./TableItems/ScratchExpirationBar";
+import OrgDetailModal from "./TableItems/OrgDetailModal";
 import OrgActions from "./TableItems/OrgActions";
 import ScratchActionMenu from "./TableItems/ScratchActionMenu";
 import type { ListOrgsSuccessResponse } from "../../../../shared/sfdxResponses";
@@ -27,15 +24,22 @@ const COLUMNS = [
   { name: "ACTIONS", uid: "actions" },
 ];
 
-function ScratchesTable() {
-  const { data, isLoading } = useQuery(["list-orgs"], queries.listOrgs);
-
-  const scratchOrgs = data?.result.scratchOrgs
+function sortOrgsByCreatedDate(orgs: ScratchOrg[]) {
+  return orgs
     .map((s, idx) => ({
       id: idx,
       ...s,
     }))
     .sort((a, b) => (a.createdDate > b.createdDate ? -1 : 1));
+}
+
+type ScratchesTableProps = {
+  orgs: ScratchOrg[];
+};
+
+function ScratchesTable({ orgs }: ScratchesTableProps) {
+  const scratchOrgs = sortOrgsByCreatedDate(orgs);
+
   const { setVisible, bindings } = useModal();
 
   const [detailedScratch, setDetailedScratch] = useState<ScratchOrg>();
@@ -112,43 +116,32 @@ function ScratchesTable() {
           Scratch Orgs
         </Text>
       </Row>
-      {isLoading ? (
-        <Loading
-          color="secondary"
-          type="points"
-          css={{ pt: 30, width: "100%" }}
-          size="md"
-        >
-          <Text css={{ pt: 15 }}>Getting orgs...</Text>
-        </Loading>
-      ) : (
-        <Table aria-label="table of scratches" shadow={false}>
-          <Table.Header columns={COLUMNS}>
-            {(column) => (
-              <Table.Column
-                key={column.uid}
-                align={column.uid === "actions" ? "end" : "start"}
-              >
-                {column.name}
-              </Table.Column>
-            )}
-          </Table.Header>
-          <Table.Body items={scratchOrgs}>
-            {(org) => {
-              return (
-                <Table.Row>
-                  {(columnKey) => (
-                    <Table.Cell css={{ fontSize: "x-small" }}>
-                      {renderTableCell(org, columnKey)}
-                    </Table.Cell>
-                  )}
-                </Table.Row>
-              );
-            }}
-          </Table.Body>
-          <Table.Pagination noMargin align="center" rowsPerPage={3} size="sm" />
-        </Table>
-      )}
+      <Table aria-label="table of scratches" shadow={false}>
+        <Table.Header columns={COLUMNS}>
+          {(column) => (
+            <Table.Column
+              key={column.uid}
+              align={column.uid === "actions" ? "end" : "start"}
+            >
+              {column.name}
+            </Table.Column>
+          )}
+        </Table.Header>
+        <Table.Body items={scratchOrgs}>
+          {(org) => {
+            return (
+              <Table.Row>
+                {(columnKey) => (
+                  <Table.Cell css={{ fontSize: "x-small" }}>
+                    {renderTableCell(org, columnKey)}
+                  </Table.Cell>
+                )}
+              </Table.Row>
+            );
+          }}
+        </Table.Body>
+        <Table.Pagination noMargin align="center" rowsPerPage={3} size="sm" />
+      </Table>
     </Col>
   );
 }

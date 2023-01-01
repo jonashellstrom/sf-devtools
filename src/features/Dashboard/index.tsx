@@ -1,8 +1,7 @@
 import { Container } from "@nextui-org/react";
 
-import ScratchesTable from "./ScratchView/OrgsTable/ScratchesTable";
-import NonScratchesTable from "./ScratchView/OrgsTable/NonScratchesTable";
 import CurrentUserDetails from "./CurrentUser/CurrentUserDetails";
+import OrgsTables from "./OrgView/OrgsTable/OrgsTables";
 
 function Dashboard() {
   return (
@@ -13,8 +12,7 @@ function Dashboard() {
       }}
     >
       <CurrentUserDetails />
-      <ScratchesTable />
-      <NonScratchesTable />
+      <OrgsTables />
     </Container>
   );
 }

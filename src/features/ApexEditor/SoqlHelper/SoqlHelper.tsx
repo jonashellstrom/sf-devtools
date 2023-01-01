@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Dropdown, Row, Text, Tooltip } from "@nextui-org/react";
 
 import { DeleteIcon } from "../../../components/icons/DeleteIcon";
-import { IconButton } from "../../Dashboard/ScratchView/IconButton";
+import { IconButton } from "../../Dashboard/OrgView/IconButton";
 import AddSoqlOptionModal from "./AddSoqlOptionModal";
 import {
   type SoqlQueryOption,

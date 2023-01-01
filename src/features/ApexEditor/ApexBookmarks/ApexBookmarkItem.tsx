@@ -1,7 +1,7 @@
 import { Loading, Row, Text, Tooltip } from "@nextui-org/react";
 import { useMutation } from "@tanstack/react-query";
 
-import { IconButton } from "../../Dashboard/ScratchView/IconButton";
+import { IconButton } from "../../Dashboard/OrgView/IconButton";
 import { type BookmarkedApex, setBookmarksInLocalStorage } from "./utils";
 import mainApi from "../../../mainApi";
 import ActionButton from "../../../components/ActionButton";

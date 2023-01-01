@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 
 import mainApi from "../../../../../mainApi";
 import type { ListOrgsSuccessResponse } from "../../../../../shared/sfdxResponses";
-import OrgDetailModal from "../OrgDetailModal";
+import OrgDetailModal from "./OrgDetailModal";
 import SetAliasModal from "./SetAliasModal";
 
 type NonScratchOrg =
