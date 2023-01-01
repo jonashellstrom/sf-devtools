@@ -36,7 +36,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "app": "npm i && npm run electron:package:mac",
+    "built-it": "npm i && npm run electron:package:mac",
     "local": "npm i && npm run electron:start",
     "electron:start": "concurrently -k \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electronmon .\"",
     "electron:package:mac": "npm run build && electron-builder -m -c.extraMetadata.main=build/main.js"

@@ -2,10 +2,14 @@ import { Card, Col, Loading, Row, Text } from "@nextui-org/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 import mainApi from "../../../mainApi";
+import queryKeys from "../../../shared/queryKeys";
 import Limits from "../Limits/Limits";
 
 function CurrentUserDetails() {
-  const { data, isLoading } = useQuery(["current-user"], mainApi.displayUser);
+  const { data, isLoading } = useQuery(
+    [queryKeys.CURRENT_USER],
+    mainApi.displayUser
+  );
   const { mutate: openOrg, isLoading: isOpenOrgLoading } = useMutation(
     (username: string) => mainApi.openOrg(username)
   );

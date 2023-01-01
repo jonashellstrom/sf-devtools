@@ -20,7 +20,7 @@ function OrgActions({ org }: OrgActionsProps) {
   const { mutate: setDefaultOrg, isLoading: isSetDefaultOrgLoading } =
     useMutation((orgUsername: string) => mainApi.setDefaultOrg(orgUsername), {
       onSuccess() {
-        queryClient.invalidateQueries(["current-user"]);
+        queryClient.invalidateQueries([queryKeys.CURRENT_USER]);
         queryClient.invalidateQueries([queryKeys.TRACE_FLAGS]);
       },
     });

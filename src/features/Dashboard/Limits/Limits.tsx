@@ -1,10 +1,14 @@
 import { Row, Text, Collapse, Loading } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import mainApi from "../../../mainApi";
+import queryKeys from "../../../shared/queryKeys";
 import LimitItem from "./LimitItem";
 
 function Limits() {
-  const { data, isLoading } = useQuery(["list-limits"], mainApi.listLimits);
+  const { data, isLoading } = useQuery(
+    [queryKeys.LIST_LIMITS],
+    mainApi.listLimits
+  );
 
   return (
     <>

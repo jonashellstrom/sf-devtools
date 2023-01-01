@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import mainApi from "../../../../../mainApi";
 import type { ListOrgsSuccessResponse } from "../../../../../shared/sfdxResponses";
+import queryKeys from "../../../../../shared/queryKeys";
 
 type ScratchOrg = ListOrgsSuccessResponse["result"]["scratchOrgs"][number];
 type NonScratchOrg =
@@ -30,7 +31,7 @@ function SetAliasModal({ org, modalBindings, setVisible }: SetAliasModalProps) {
     {
       onSuccess() {
         queryClient.invalidateQueries({
-          queryKey: ["list-orgs"],
+          queryKey: [queryKeys.LIST_ORGS],
         });
         setVisible(false);
       },

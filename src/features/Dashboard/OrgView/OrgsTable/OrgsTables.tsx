@@ -1,11 +1,12 @@
 import { Col, Loading, Row, Text } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import mainApi from "../../../../mainApi";
+import queryKeys from "../../../../shared/queryKeys";
 import NonScratchesTable from "./NonScratchesTable";
 import ScratchesTable from "./ScratchesTable";
 
 function OrgsTables() {
-  const { data, isLoading } = useQuery(["list-orgs"], mainApi.listOrgs);
+  const { data, isLoading } = useQuery([queryKeys.LIST_ORGS], mainApi.listOrgs);
 
   if (!isLoading && !data) {
     return (

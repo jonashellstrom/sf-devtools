@@ -2,9 +2,13 @@ import { Col, Loading, Row, Text } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 
 import mainApi from "../../../mainApi";
+import queryKeys from "../../../shared/queryKeys";
 
 function MiniOrgInfo() {
-  const { data, isLoading } = useQuery(["current-user"], mainApi.displayUser);
+  const { data, isLoading } = useQuery(
+    [queryKeys.CURRENT_USER],
+    mainApi.displayUser
+  );
 
   return (
     <Row css={{ minWidth: "120px" }}>

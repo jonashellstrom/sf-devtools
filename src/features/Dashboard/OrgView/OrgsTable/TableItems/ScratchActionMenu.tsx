@@ -6,6 +6,7 @@ import mainApi from "../../../../../mainApi";
 import type { ListOrgsSuccessResponse } from "../../../../../shared/sfdxResponses";
 import SetAliasModal from "./SetAliasModal";
 import { DeleteIcon } from "../../../../../components/icons/DeleteIcon";
+import queryKeys from "../../../../../shared/queryKeys";
 
 type ScratchOrg = ListOrgsSuccessResponse["result"]["scratchOrgs"][number];
 
@@ -32,7 +33,7 @@ function ScratchActionMenu({
       {
         onSuccess() {
           queryClient.invalidateQueries({
-            queryKey: ["list-orgs"],
+            queryKey: [queryKeys.LIST_ORGS],
           });
         },
       }

@@ -2,6 +2,7 @@ import { Modal, Row, Text } from "@nextui-org/react";
 import { useQuery } from "@tanstack/react-query";
 import { DateTime } from "luxon";
 import mainApi from "../../../../mainApi";
+import queryKeys from "../../../../shared/queryKeys";
 
 import { type GetLogResponse } from "../../../../shared/sfdxResponses";
 
@@ -18,7 +19,7 @@ function FullLogModal({
   logId,
   logData,
 }: FullLogModalProps) {
-  const { data } = useQuery(["log-id", logId], () =>
+  const { data } = useQuery([queryKeys.GET_LOG, logId], () =>
     mainApi.getLog(logId, logData)
   );
 

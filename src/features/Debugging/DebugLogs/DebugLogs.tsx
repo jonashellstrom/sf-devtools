@@ -42,7 +42,7 @@ function DebugLogs() {
         .slice(logPageStart - LOGS_PER_PAGE, logPageStart)
         .map((log) => {
           return {
-            queryKey: ["log-id", log.Id],
+            queryKey: [queryKeys.GET_LOG, log.Id],
             queryFn: () => mainApi.getLog(log.Id, log),
             enabled: fetchedLogs && fetchedLogs.length > 0,
             staleTime: Infinity,

@@ -21,9 +21,9 @@ A React UI that makes working with the sfdx cli simpler and more efficient. cli 
 ## Quick start (macOS)
 ### Build dmg
 ```bash
-npm run app
+npm run built-it
 ```
-This command will package the app and output a dmg under `./dist/`
+This command will package the app and output a dmg under `./dist/` (you can run it from there or move it to the Applications directory)
 ### Run locally
 ```bash
 npm run local
