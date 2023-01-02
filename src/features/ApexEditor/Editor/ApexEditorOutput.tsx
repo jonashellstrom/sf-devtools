@@ -15,10 +15,7 @@ function ApexEditorOutput() {
     (state) => [state.shouldShowRawOutput, state.toggleShouldShowRawOutput],
     shallow
   );
-  const isRunCodeLoading = useZustand(
-    (state) => state.isRunCodeLoading,
-    shallow
-  );
+  const isRunCodeLoading = useZustand((state) => state.isRunCodeLoading);
 
   useDebouncedSaveToLocalStorage(LOCAL_STORAGE_KEYS.CODE_OUTPUT, output, 0);
   useDebouncedSaveToLocalStorage(

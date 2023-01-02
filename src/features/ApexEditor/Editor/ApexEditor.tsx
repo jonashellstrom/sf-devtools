@@ -10,10 +10,7 @@ function ApexEditor() {
     (state) => [state.code, state.setCode],
     shallow
   );
-  const isEditorExpanded = useZustand(
-    (state) => state.isEditorExpanded,
-    shallow
-  );
+  const isEditorExpanded = useZustand((state) => state.isEditorExpanded);
 
   useDebouncedSaveToLocalStorage(LOCAL_STORAGE_KEYS.CODE, code, 2000);
 

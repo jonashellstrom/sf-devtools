@@ -1,11 +1,10 @@
 import { Container } from "@nextui-org/react";
-import shallow from "zustand/shallow";
 
 import { useZustand } from "../../hooks/useZustand";
 import SetupModal from "./SetupModal";
 
 function SetupWrapper({ children }: React.PropsWithChildren) {
-  const sfdxPath = useZustand((state) => state.sfdxPath, shallow);
+  const sfdxPath = useZustand((state) => state.sfdxPath);
   if (!sfdxPath)
     return (
       <Container

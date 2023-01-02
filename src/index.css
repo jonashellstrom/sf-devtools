@@ -9,6 +9,10 @@ body {
 
 .w-tc-editor-preview pre code {
   font-size: 12px;
+  border-radius: 0;
+}
+.w-tc-editor-preview pre {
+  border-radius: 0;
 }
 
 code {

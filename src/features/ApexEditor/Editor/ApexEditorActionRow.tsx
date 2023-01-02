@@ -19,11 +19,7 @@ function ApexEditorActionRow() {
     ],
     shallow
   );
-  const shouldShowRawOutput = useZustand(
-    (state) => state.shouldShowRawOutput,
-
-    shallow
-  );
+  const shouldShowRawOutput = useZustand((state) => state.shouldShowRawOutput);
 
   const { mutate, isLoading } = useMutation(
     () => mainApi.runAnonymous(getCode()),

@@ -1,5 +1,4 @@
 import { Button, Container, Row, Text } from "@nextui-org/react";
-import shallow from "zustand/shallow";
 
 import useDebouncedSaveToLocalStorage from "../../hooks/useDebouncedSaveToLocalStorage";
 import useEditorTheme, {
@@ -12,8 +11,7 @@ import ApexEditorContainer from "./Editor/ApexEditorContainer";
 
 function ApexEditor() {
   const toggleIsEditorExpanded = useZustand(
-    (state) => state.toggleIsEditorExpanded,
-    shallow
+    (state) => state.toggleIsEditorExpanded
   );
   const isEditorExpanded = useZustand((state) => state.isEditorExpanded);
   const { currentTheme, setTheme } = useEditorTheme();

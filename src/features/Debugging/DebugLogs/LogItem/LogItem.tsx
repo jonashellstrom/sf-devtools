@@ -69,7 +69,9 @@ function LogItem({ log, isLoading }: LogItemProps) {
             transition: "opacity 1000ms ease-in",
           }}
         >
-          <Card.Body css={{ mt: -10, mb: -10 }}>
+          <Card.Body
+            css={{ mt: -10, mb: -10, width: "auto", overflow: "hidden" }}
+          >
             <Row justify="space-between" align="center" css={{ height: 40 }}>
               {log ? (
                 <Text size="$xs" b css={{ mb: 5 }}>

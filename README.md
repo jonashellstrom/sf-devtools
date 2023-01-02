@@ -21,12 +21,12 @@ A React UI that makes working with the sfdx cli simpler and more efficient. cli 
 ## Quick start (macOS)
 ### Build dmg
 ```bash
-npm run built-it
+npm run build-it
 ```
 This command will package the app and output a dmg under `./dist/` (you can run it from there or move it to the Applications directory)
 ### Run locally
 ```bash
-npm run local
+npm run locally
 ```
 This will start the Electron app locally using port 3000
 

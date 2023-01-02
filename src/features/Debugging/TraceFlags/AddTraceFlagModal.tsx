@@ -14,7 +14,7 @@ import { DateTime } from "luxon";
 import mainApi from "../../../mainApi";
 import soql, { type QueryTraceFlags } from "../../../shared/soql";
 import queryKeys from "../../../shared/queryKeys";
-import type { NewTraceFlag } from "./types";
+import type { NewTraceFlag, TraceFlag } from "./types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SfdxErrorResponse } from "../../../shared/sfdxResponses";
 import useCreateDebugLevel from "./useCreateDebugLevel";
@@ -34,6 +34,14 @@ function buildCreateTraceFlagRequest(newTraceFlag: NewTraceFlag) {
     `DebugLevelId=${newTraceFlag.debugLevelId} ` +
     `TracedEntityId=${newTraceFlag.tracedEntityId} `
   );
+}
+
+function filterUniqueTracedEntitiesByEntityId(records: TraceFlag[]) {
+  const hm: Record<string, boolean> = {};
+  return records.filter((i) => {
+    const k = i.TracedEntityId;
+    return hm.hasOwnProperty(k) ? false : (hm[k] = true);
+  });
 }
 
 function AddTraceFlagModal({
@@ -104,21 +112,38 @@ function AddTraceFlagModal({
   }
 
   function handleOnStartDateChange(e: React.ChangeEvent<FormElement>) {
+    const startDate = DateTime.fromSQL(e.target.value);
+    const endDate = DateTime.fromSQL(e.target.value).plus({
+      minutes: durationInMinutes,
+    });
     setNewTraceFlag({
       ...newTraceFlag,
       startTime: newTraceFlag.startTime.set({
-        year: DateTime.fromSQL(e.target.value).year,
-        month: DateTime.fromSQL(e.target.value).month,
-        day: DateTime.fromSQL(e.target.value).day,
+        year: startDate.year,
+        month: startDate.month,
+        day: startDate.day,
+      }),
+      endTime: newTraceFlag.endTime.set({
+        year: endDate.year,
+        month: endDate.month,
+        day: endDate.day,
       }),
     });
   }
   function handleOnStartTimeChange(e: React.ChangeEvent<FormElement>) {
+    const startTime = DateTime.fromFormat(e.target.value, "HH:mm");
+    const endTime = DateTime.fromFormat(e.target.value, "HH:mm").plus({
+      minutes: durationInMinutes,
+    });
     setNewTraceFlag({
       ...newTraceFlag,
       startTime: newTraceFlag.startTime.set({
-        hour: DateTime.fromFormat(e.target.value, "HH:mm").hour,
-        minute: DateTime.fromFormat(e.target.value, "HH:mm").minute,
+        hour: startTime.hour,
+        minute: startTime.minute,
+      }),
+      endTime: newTraceFlag.endTime.set({
+        hour: endTime.hour,
+        minute: endTime.minute,
       }),
     });
   }
@@ -154,6 +179,9 @@ function AddTraceFlagModal({
 
   function handleAddNewPress() {
     if (isValidNewTraceFlag) {
+      const hi = buildCreateTraceFlagRequest(newTraceFlag);
+      console.log("🍊 > handleAddNewPress > hi", hi);
+
       createRecord(buildCreateTraceFlagRequest(newTraceFlag));
     }
   }
@@ -208,14 +236,18 @@ function AddTraceFlagModal({
                   }
                 }}
               >
-                {tracedEntities.result.records.map((r) => (
-                  <Dropdown.Item
-                    key={`${r.TracedEntityId}|${r.TracedEntity.Name}`}
-                    description={r.TracedEntityId}
-                  >
-                    {r.TracedEntity.Name}
-                  </Dropdown.Item>
-                ))}
+                {filterUniqueTracedEntitiesByEntityId(
+                  tracedEntities.result.records
+                ).map((r) => {
+                  return (
+                    <Dropdown.Item
+                      key={`${r.TracedEntityId}|${r.TracedEntity.Name}`}
+                      description={r.TracedEntityId}
+                    >
+                      {r.TracedEntity.Name}
+                    </Dropdown.Item>
+                  );
+                })}
               </Dropdown.Menu>
             </Dropdown>
             <Input
