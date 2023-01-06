@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Button, Col, Input, Loading, Modal, Text } from "@nextui-org/react";
+import {
+  Button,
+  Col,
+  Input,
+  Loading,
+  Modal,
+  Row,
+  Text,
+  Tooltip,
+} from "@nextui-org/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import mainApi from "../../../../../mainApi";
@@ -38,6 +47,19 @@ function SetAliasModal({ org, modalBindings, setVisible }: SetAliasModalProps) {
     }
   );
 
+  const {
+    mutate: unsetAliasForOrg,
+    isLoading: isUnsetAliasForOrgLoading,
+    isError: isUnsetAliasForOrgError,
+  } = useMutation((alias: string) => mainApi.unsetAliasForOrg(alias), {
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: [queryKeys.LIST_ORGS],
+      });
+      setVisible(false);
+    },
+  });
+
   const [newAlias, setNewAlias] = useState("");
   function handleSetAliasPress() {
     if (!!newAlias) {
@@ -56,7 +78,7 @@ function SetAliasModal({ org, modalBindings, setVisible }: SetAliasModalProps) {
       <Modal.Header>
         <Col>
           <Text size="$md" b>
-            {`Set an alias for org ${org.orgId}`}
+            {`Set an SFDX CLI alias for org ${org.orgId}`}
           </Text>
           {!!org.alias && (
             <Text size="$sm">{`Current alias: ${org.alias}`}</Text>
@@ -67,7 +89,7 @@ function SetAliasModal({ org, modalBindings, setVisible }: SetAliasModalProps) {
         <Input
           bordered
           clearable
-          labelPlaceholder="New Alias"
+          labelPlaceholder="New SFDX CLI Alias"
           color="primary"
           value={newAlias}
           onChange={(e) => setNewAlias(e.target.value)}
@@ -77,6 +99,12 @@ function SetAliasModal({ org, modalBindings, setVisible }: SetAliasModalProps) {
             }
           }}
         />
+        {isUnsetAliasForOrgError && (
+          <Text
+            size="$sm"
+            color="error"
+          >{`⛔️ Something went wrong unsetting alias`}</Text>
+        )}
         {isError && (
           <Text
             size="$sm"
@@ -85,14 +113,34 @@ function SetAliasModal({ org, modalBindings, setVisible }: SetAliasModalProps) {
         )}
       </Modal.Body>
       <Modal.Footer>
-        <Button
-          auto
-          onPress={handleSetAliasPress}
-          color="primary"
-          disabled={!newAlias}
-        >
-          {isSetAliasForOrgLoading ? <Loading size="sm" /> : "Set alias"}
-        </Button>
+        <Row justify="space-between">
+          <Tooltip
+            content={`Unset CLI alias "${org.alias}" for this org`}
+            color="error"
+            css={{ zIndex: "10000000 !important" }}
+          >
+            <Button
+              auto
+              onPress={() => unsetAliasForOrg(org.alias)}
+              color="error"
+              disabled={isUnsetAliasForOrgLoading}
+            >
+              {isUnsetAliasForOrgLoading ? (
+                <Loading size="sm" />
+              ) : (
+                "Unset alias"
+              )}
+            </Button>
+          </Tooltip>
+          <Button
+            auto
+            onPress={handleSetAliasPress}
+            color="primary"
+            disabled={!newAlias || isSetAliasForOrgLoading}
+          >
+            {isSetAliasForOrgLoading ? <Loading size="sm" /> : "Set alias"}
+          </Button>
+        </Row>
       </Modal.Footer>
     </Modal>
   );

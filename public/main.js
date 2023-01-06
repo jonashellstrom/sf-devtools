@@ -270,6 +270,17 @@ ipcMain.handle("setAliasForOrg", async (_event, sfdxPath, username, alias) => {
   }
 });
 
+ipcMain.handle("unsetAliasForOrg", async (_event, sfdxPath, alias) => {
+  try {
+    const cliJsonOutput = await exec(
+      `cd ${sfdxPath} && sfdx sfdx alias:unset ${alias} --json`
+    );
+    return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
+  } catch (_error) {
+    return "An error occured";
+  }
+});
+
 ipcMain.handle("openOrg", async (_event, sfdxPath, username) => {
   try {
     const cliJsonOutput = await exec(

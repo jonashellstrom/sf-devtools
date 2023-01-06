@@ -1,9 +1,18 @@
-import React from "react";
-import { Table, Row, Text, User, Col, Badge } from "@nextui-org/react";
+import React, { useState } from "react";
+import {
+  Table,
+  Row,
+  Text,
+  User,
+  Col,
+  Badge,
+  useModal,
+} from "@nextui-org/react";
 
 import { ListOrgsSuccessResponse } from "../../../../shared/sfdxResponses";
 import NonScratchActionMenu from "./TableItems/NonScratchActionMenu";
 import OrgActions from "./TableItems/OrgActions";
+import OrgDetailModal from "./TableItems/OrgDetailModal/OrgDetailModal";
 
 type NonScratchOrg =
   ListOrgsSuccessResponse["result"]["nonScratchOrgs"][number];
@@ -25,6 +34,14 @@ function NonScratchesTable({ orgs }: NonScratchesTableProps) {
     ...s,
   }));
 
+  const { setVisible, bindings } = useModal();
+  const [detailedOrg, setDetailedOrg] = useState<NonScratchOrg>();
+
+  function handleSetDetailedOrg(org: NonScratchOrg) {
+    setDetailedOrg(org);
+    setVisible(true);
+  }
+
   function renderTableCell(org: NonScratchOrg, columnKey: React.Key) {
     switch (columnKey) {
       case "org":
@@ -35,11 +52,14 @@ function NonScratchesTable({ orgs }: NonScratchesTableProps) {
               pointer
               bordered
               text={org.alias?.slice(0, 1) || "U"}
-              name={org.alias || "Unaliased Scratch"}
+              name={org.alias || "Unaliased Org"}
               css={{
                 p: 0,
                 cursor: "pointer",
                 justifyContent: "flex-start",
+              }}
+              onClick={() => {
+                handleSetDetailedOrg(org);
               }}
             >
               {org.orgId}
@@ -81,6 +101,13 @@ function NonScratchesTable({ orgs }: NonScratchesTableProps) {
 
   return (
     <Col>
+      {detailedOrg && (
+        <OrgDetailModal
+          org={detailedOrg}
+          modalBindings={bindings}
+          setVisible={setVisible}
+        />
+      )}
       <Row>
         <Text h5 b>
           Non-Scratch Orgs

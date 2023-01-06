@@ -10,7 +10,7 @@ import {
 } from "@nextui-org/react";
 
 import ScratchExpirationBar from "./TableItems/ScratchExpirationBar";
-import OrgDetailModal from "./TableItems/OrgDetailModal";
+import OrgDetailModal from "./TableItems/OrgDetailModal/OrgDetailModal";
 import OrgActions from "./TableItems/OrgActions";
 import ScratchActionMenu from "./TableItems/ScratchActionMenu";
 import type { ListOrgsSuccessResponse } from "../../../../shared/sfdxResponses";

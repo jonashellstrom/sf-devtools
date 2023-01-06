@@ -102,7 +102,7 @@ function ScratchActionMenu({
             </Dropdown.Item>
             <Dropdown.Item key="update-alias">
               <Text onClick={() => setVisible(!bindings.open)}>
-                Update alias
+                Update CLI alias
               </Text>
             </Dropdown.Item>
             <Dropdown.Item

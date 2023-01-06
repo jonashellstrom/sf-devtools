@@ -10,26 +10,21 @@ body {
 .w-tc-editor-preview pre code {
   font-size: 12px;
   border-radius: 0;
+  padding: 0;
+  white-space: inherit;
 }
+
 .w-tc-editor-preview pre {
-  border-radius: 0;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
-
-pre {
   border: 0;
   background-color: transparent;
   border-radius: 0;
   margin: 0;
   padding: 0;
 }
-pre code {
-  padding: 0;
-  white-space: inherit;
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
 }
 
 .collapse {

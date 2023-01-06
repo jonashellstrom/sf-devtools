@@ -13,6 +13,7 @@ const VALID_CHANNELS = [
   "listLimits",
   "listOrgs",
   "setAliasForOrg",
+  "unsetAliasForOrg",
   "openOrg",
   "markScratchForDeletion",
 ];

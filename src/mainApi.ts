@@ -120,6 +120,15 @@ async function setAliasForOrg(username: string, alias: string) {
   else throw new Error("Error setting new alias");
 }
 
+async function unsetAliasForOrg(alias: string) {
+  const sfdxPath = useZustand.getState().sfdxPath;
+  const res = await window?.api?.on("unsetAliasForOrg", sfdxPath, [alias]);
+
+  const unsetAliasForOrgRes = JSON.parse(res) as SfdxResponse;
+  if (unsetAliasForOrgRes.status === 0) return unsetAliasForOrgRes;
+  else throw new Error("Error setting new alias");
+}
+
 async function openOrg(username: string) {
   const sfdxPath = useZustand.getState().sfdxPath;
   await window?.api?.on("openOrg", sfdxPath, [username]);
@@ -142,6 +151,7 @@ const mainApi = {
   displayUser,
   setDefaultOrg,
   setAliasForOrg,
+  unsetAliasForOrg,
   listLimits,
   listOrgs,
   openOrg,

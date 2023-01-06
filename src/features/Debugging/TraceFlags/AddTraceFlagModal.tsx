@@ -178,12 +178,8 @@ function AddTraceFlagModal({
     Boolean(newTraceFlag.tracedEntityId);
 
   function handleAddNewPress() {
-    if (isValidNewTraceFlag) {
-      const hi = buildCreateTraceFlagRequest(newTraceFlag);
-      console.log("🍊 > handleAddNewPress > hi", hi);
-
+    if (isValidNewTraceFlag)
       createRecord(buildCreateTraceFlagRequest(newTraceFlag));
-    }
   }
 
   return (
