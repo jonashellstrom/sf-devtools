@@ -31,8 +31,8 @@ function ScratchActionMenu({
     useMutation(
       (username: string) => mainApi.markScratchForDeletion(username),
       {
-        onSuccess() {
-          queryClient.invalidateQueries({
+        async onSuccess() {
+          await queryClient.invalidateQueries({
             queryKey: [queryKeys.LIST_ORGS],
           });
         },

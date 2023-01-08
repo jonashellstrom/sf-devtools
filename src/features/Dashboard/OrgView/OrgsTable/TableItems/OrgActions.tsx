@@ -15,26 +15,30 @@ type OrgActionsProps = {
 };
 
 function OrgActions({ org }: OrgActionsProps) {
+  const isDefault = org.isDefaultUsername;
   const queryClient = useQueryClient();
 
   const { mutate: setDefaultOrg, isLoading: isSetDefaultOrgLoading } =
     useMutation((orgUsername: string) => mainApi.setDefaultOrg(orgUsername), {
-      onSuccess() {
-        queryClient.invalidateQueries([queryKeys.CURRENT_USER]);
-        queryClient.invalidateQueries([queryKeys.TRACE_FLAGS]);
+      async onSuccess() {
+        await queryClient.invalidateQueries([queryKeys.CURRENT_USER]);
+        await queryClient.invalidateQueries([queryKeys.TRACE_FLAGS]);
+        await queryClient.invalidateQueries([queryKeys.LIST_ORGS]);
       },
     });
 
   return (
     <Row css={{ width: "auto" }}>
       <ActionButton
-        text="MAKE DEFAULT"
+        text={isDefault ? "DEFAULT" : "MAKE DEFAULT"}
         minWidth={100}
         isLoading={isSetDefaultOrgLoading}
-        isDisabled={isSetDefaultOrgLoading}
+        isDisabled={isDefault || isSetDefaultOrgLoading}
         onPress={() => setDefaultOrg(org.username)}
         withTooltip={{
-          tooltipText: "Set this org as your default SFDX org",
+          tooltipText: isDefault
+            ? "This is your default SFDX org"
+            : "Set this org as your default SFDX org",
         }}
       />
     </Row>

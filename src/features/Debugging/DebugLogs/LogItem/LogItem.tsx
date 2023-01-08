@@ -42,8 +42,8 @@ function LogItem({ log, isLoading }: LogItemProps) {
   const { mutate: deleteLog, isLoading: isMutationLoading } = useMutation(
     () => mainApi.deleteRecord("ApexLog", log?.logData.Id || "", true),
     {
-      onSuccess() {
-        queryClient
+      async onSuccess() {
+        await queryClient
           .invalidateQueries({ queryKey: [queryKeys.LIST_LOGS] })
           .then(() => setIsCollapsibleOpen(true));
       },

@@ -78,8 +78,8 @@ export const useZustand = create<AppStateWithActions>()(
         shouldShowRawOutput: !state.shouldShowRawOutput,
       }));
     },
-    toggleIsRunCodeLoading(v: boolean) {
-      set((state) => ({
+    toggleIsRunCodeLoading(v) {
+      set(() => ({
         isRunCodeLoading: v,
       }));
     },

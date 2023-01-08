@@ -1,4 +1,4 @@
-import { Card, Col, Loading, Row, Text } from "@nextui-org/react";
+import { Card, Col, Image, Loading, Row, Text } from "@nextui-org/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 import mainApi from "../../../mainApi";
@@ -30,30 +30,37 @@ function CurrentUserDetails() {
               </Text>
             </Loading>
           ) : (
-            <Col>
-              <Text
-                b
-                size="$sm"
-              >{`Your default sfdx org is set as ${data?.result.alias} (${data?.result.orgId})`}</Text>
-              <Text size="$sm">{data?.result.username}</Text>
-              <Row>
+            <Row>
+              <Image
+                src="tatemono.png"
+                height="80px"
+                css={{ pl: 10, pr: 10 }}
+              />
+              <Col>
                 <Text
+                  b
                   size="$sm"
-                  onClick={() => data && openOrg(data.result.username)}
-                  css={{
-                    cursor: "pointer",
-                    color: "#68ABF8",
-                    "&:hover": {
-                      color: "#4187D8",
-                    },
-                  }}
-                >
-                  {isOpenOrgLoading
-                    ? "Opening org in browser..."
-                    : data?.result.instanceUrl}
-                </Text>
-              </Row>
-            </Col>
+                >{`Your default sfdx org is set as ${data?.result.alias} (${data?.result.orgId})`}</Text>
+                <Text size="$sm">{data?.result.username}</Text>
+                <Row>
+                  <Text
+                    size="$sm"
+                    onClick={() => data && openOrg(data.result.username)}
+                    css={{
+                      cursor: "pointer",
+                      color: "#68ABF8",
+                      "&:hover": {
+                        color: "#4187D8",
+                      },
+                    }}
+                  >
+                    {isOpenOrgLoading
+                      ? "Opening org in browser..."
+                      : data?.result.instanceUrl}
+                  </Text>
+                </Row>
+              </Col>
+            </Row>
           )}
         </Row>
         <Limits />

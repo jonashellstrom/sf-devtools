@@ -273,7 +273,7 @@ ipcMain.handle("setAliasForOrg", async (_event, sfdxPath, username, alias) => {
 ipcMain.handle("unsetAliasForOrg", async (_event, sfdxPath, alias) => {
   try {
     const cliJsonOutput = await exec(
-      `cd ${sfdxPath} && sfdx sfdx alias:unset ${alias} --json`
+      `cd ${sfdxPath} && sfdx alias:unset ${alias} --json`
     );
     return cliJsonOutput.replace(CLI_JSON_SANITIZING_PATTERN, "");
   } catch (_error) {

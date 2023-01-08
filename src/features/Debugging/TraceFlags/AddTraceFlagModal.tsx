@@ -89,8 +89,10 @@ function AddTraceFlagModal({
   } = useMutation(
     (values: string) => mainApi.createRecord("TraceFlag", values, true),
     {
-      onSuccess() {
-        queryClient.invalidateQueries({ queryKey: [queryKeys.TRACE_FLAGS] });
+      async onSuccess() {
+        await queryClient.invalidateQueries({
+          queryKey: [queryKeys.TRACE_FLAGS],
+        });
         setIsModalOpen(false);
       },
     }

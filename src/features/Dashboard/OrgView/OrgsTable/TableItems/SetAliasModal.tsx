@@ -38,8 +38,8 @@ function SetAliasModal({ org, modalBindings, setVisible }: SetAliasModalProps) {
   } = useMutation(
     (alias: string) => mainApi.setAliasForOrg(org.username, alias),
     {
-      onSuccess() {
-        queryClient.invalidateQueries({
+      async onSuccess() {
+        await queryClient.invalidateQueries({
           queryKey: [queryKeys.LIST_ORGS],
         });
         setVisible(false);
@@ -52,8 +52,8 @@ function SetAliasModal({ org, modalBindings, setVisible }: SetAliasModalProps) {
     isLoading: isUnsetAliasForOrgLoading,
     isError: isUnsetAliasForOrgError,
   } = useMutation((alias: string) => mainApi.unsetAliasForOrg(alias), {
-    onSuccess() {
-      queryClient.invalidateQueries({
+    async onSuccess() {
+      await queryClient.invalidateQueries({
         queryKey: [queryKeys.LIST_ORGS],
       });
       setVisible(false);
@@ -115,7 +115,11 @@ function SetAliasModal({ org, modalBindings, setVisible }: SetAliasModalProps) {
       <Modal.Footer>
         <Row justify="space-between">
           <Tooltip
-            content={`Unset CLI alias "${org.alias}" for this org`}
+            content={
+              org.alias
+                ? `Unset CLI alias "${org.alias}" for this org`
+                : "No CLI alias for this org"
+            }
             color="error"
             css={{ zIndex: "10000000 !important" }}
           >
@@ -123,7 +127,7 @@ function SetAliasModal({ org, modalBindings, setVisible }: SetAliasModalProps) {
               auto
               onPress={() => unsetAliasForOrg(org.alias)}
               color="error"
-              disabled={isUnsetAliasForOrgLoading}
+              disabled={!org.alias || isUnsetAliasForOrgLoading}
             >
               {isUnsetAliasForOrgLoading ? (
                 <Loading size="sm" />

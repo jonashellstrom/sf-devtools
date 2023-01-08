@@ -113,6 +113,7 @@ export type ListOrgsResponse = {
       connectedStatus: string;
       isDefaultDevHubUsername?: boolean;
       defaultMarker?: "(D)";
+      isDefaultUsername?: boolean;
     }
   ];
   scratchOrgs: [
@@ -146,6 +147,7 @@ export type ListOrgsResponse = {
       status: "Active" | "Expired";
       isExpired: false;
       namespace: string;
+      isDefaultUsername?: boolean;
     }
   ];
 };

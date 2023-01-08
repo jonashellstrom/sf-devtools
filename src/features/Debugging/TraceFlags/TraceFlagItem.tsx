@@ -59,10 +59,11 @@ function TraceFlagItem({ traceFlag }: TraceFlagItemProps) {
   const { mutate: deleteFlag, isLoading: isMutationLoading } = useMutation(
     () => mainApi.deleteRecord("TraceFlag", traceFlag.Id, true),
     {
-      onSuccess() {
-        queryClient
-          .invalidateQueries({ queryKey: [queryKeys.TRACE_FLAGS] })
-          .then(() => setIsCollapsibleOpen(true));
+      async onSuccess() {
+        await queryClient.invalidateQueries({
+          queryKey: [queryKeys.TRACE_FLAGS],
+        });
+        setIsCollapsibleOpen(true);
       },
     }
   );

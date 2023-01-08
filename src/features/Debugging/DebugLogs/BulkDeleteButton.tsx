@@ -14,8 +14,10 @@ function BulkDeleteButton({ isDisabled }: BulkDeleteButtonProps) {
 
   const { mutate: bulkDeleteLogs, isLoading: isBulkDeleteLogsLoading } =
     useMutation(() => mainApi.bulkDeleteLogs(), {
-      onSuccess() {
-        queryClient.invalidateQueries({ queryKey: [queryKeys.LIST_LOGS] });
+      async onSuccess() {
+        await queryClient.invalidateQueries({
+          queryKey: [queryKeys.LIST_LOGS],
+        });
       },
     });
 

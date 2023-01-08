@@ -43,7 +43,7 @@ function ApexEditorActionRow() {
           );
         } else {
           setOutput(
-            `⛔️ ${data.result.exceptionMessage}\n🔖 ${data.result.exceptionStackTrace}`
+            `⛔️ ${data.result.exceptionMessage}\n📍 ${data.result.exceptionStackTrace}`
           );
         }
       },
