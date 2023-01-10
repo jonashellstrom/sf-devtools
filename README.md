@@ -37,4 +37,10 @@ This will start the Electron app locally using port 3000
 ## Stack
 - Electron
 - sfdx
-- React, react-query, zustand
+- React, nextui, react-query, zustand
+
+## Contributing
+If you would like to contribute to this project - create a feature branch from `main`, push your changes to the feature branch and create a pull request back to `main`. For major changes, I recommend creating an issue first to explain the changes and to allow for discussion before starting the implementation.
+
+## License
+The source code for the site is licensed under the MIT license, which you can find in the [MIT-LICENSE.txt](MIT-LICENSE.txt) file.
